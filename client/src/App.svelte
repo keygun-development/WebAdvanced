@@ -1,50 +1,63 @@
 <script>
-  import logo from './assets/svelte.png'
-  import router from 'page';
-  import "./styles/app.css"
+    import router from 'page';
+    import "./styles/app.css"
+    import {authMiddleware} from "./middleware/auth";
+    import {isLoggedIn, checkAuth} from './stores/auth.js';
 
-  import Home from "./pages/Home.svelte";
-  import About from "./pages/About.svelte";
-  import Header from "./components/Header.svelte";
+    import Home from "./pages/Home.svelte";
+    import Dashboard from "./pages/Dashboard.svelte";
+    import Header from "./components/Header.svelte";
+    import Login from "./pages/auth/Login.svelte";
+    import Register from "./pages/auth/Register.svelte";
+    import {onDestroy, onMount} from "svelte";
 
-  let page;
-  let params;
-  let currentRoute;
+    let page;
+    let params;
+    let currentRoute;
 
-  router('/', (ctx) => {
-    page = Home;
-    currentRoute = ctx.pathname;
-  });
-  router('/about', (ctx) => {
-    page = About;
-    currentRoute = ctx.pathname;
-    params = ctx;
-  });
+    let loggedIn = false;
 
-  router.start();
+    const unsubscribe = isLoggedIn.subscribe(value => {
+        loggedIn = value;
+    });
+
+    onDestroy(() => {
+        unsubscribe();
+    });
+
+    router('/', (ctx) => {
+        page = Home;
+        currentRoute = ctx.pathname;
+    });
+
+    router('/inloggen', (ctx) => {
+        page = Login;
+        currentRoute = ctx.pathname;
+        params = ctx;
+    })
+
+    router('/registreren', (ctx) => {
+        page = Register;
+        currentRoute = ctx.pathname;
+        params = ctx;
+    })
+
+    router('/dashboard', authMiddleware, (ctx) => {
+        page = Dashboard;
+        currentRoute = ctx.pathname;
+        params = ctx;
+    })
+
+    router.start();
 </script>
 
 <main>
-  <img class="inline-flex" src={logo} alt="Svelte Logo" />
-  <Header active={currentRoute} />
-  <svelte:component this={page} {params} />
+    <Header active={currentRoute} isLoggedIn={loggedIn} />
+    <svelte:component this={page} {params}/>
 </main>
 
 <style>
-  :root {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  }
-
-  main {
-    text-align: center;
-    padding: 1em;
-    margin: 0 auto;
-  }
-
-  img {
-    height: 16rem;
-    width: 16rem;
-  }
-
+    main {
+        text-align: center;
+    }
 </style>
