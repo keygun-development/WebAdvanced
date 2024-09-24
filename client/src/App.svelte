@@ -2,14 +2,14 @@
     import router from 'page';
     import "./styles/app.css"
     import {authMiddleware} from "./middleware/auth";
-    import {isLoggedIn, checkAuth} from './stores/auth.js';
+    import {isLoggedIn} from './stores/auth.js';
 
     import Home from "./pages/Home.svelte";
     import Dashboard from "./pages/Dashboard.svelte";
     import Header from "./components/Header.svelte";
     import Login from "./pages/auth/Login.svelte";
     import Register from "./pages/auth/Register.svelte";
-    import {onDestroy, onMount} from "svelte";
+    import {onDestroy} from "svelte";
 
     let page;
     let params;
@@ -52,7 +52,7 @@
 </script>
 
 <main>
-    <Header active={currentRoute} isLoggedIn={loggedIn} />
+    <Header active={currentRoute} loggedIn={loggedIn} />
     <svelte:component this={page} {params}/>
 </main>
 
