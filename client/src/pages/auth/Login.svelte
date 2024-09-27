@@ -1,13 +1,13 @@
 <script>
     import router from 'page';
-    import {isLoggedIn} from "../../stores/auth.js"
+    import isAuthenticated from "../../stores/auth.js"
     let username = '';
     let password = '';
     let message = '';
 
     async function loginUser() {
         try {
-            const response = await fetch('http://localhost:3000/auth/login', {
+            const response = await fetch('http://localhost:3000/tokens', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -19,7 +19,7 @@
 
             if (response.ok) {
                 localStorage.setItem('token', data.token);
-                isLoggedIn.set(true)
+                isAuthenticated.set(true)
                 router.show('/dashboard');
             } else {
                 message = data.message;
@@ -30,7 +30,7 @@
     }
 </script>
 
-<div class="flex justify-center items-center bg-gray-100 min-h-[calc(100vh-80px)]">
+<div class="flex justify-center items-center">
     <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md my-4">
         <h2 class="text-2xl font-bold text-center mb-6">Inloggen</h2>
         <form on:submit|preventDefault={loginUser} class="space-y-6">

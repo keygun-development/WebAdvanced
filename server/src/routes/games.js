@@ -1,8 +1,9 @@
 import express from 'express';
+import games from "../data/games.js";
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-    //TODO: return the list of games
+    return res.status(200).json(games);
 })
 
 router.get("/:id", async (req, res) => {

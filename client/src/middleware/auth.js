@@ -1,21 +1,28 @@
-import router from 'page';
+import router from "page"
 
 export async function authMiddleware(ctx, next) {
-    try {
-        const response = await fetch('/auth/me', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-        });
+    const token = localStorage.getItem("token");
 
-        if (response.ok) {
-            next();
-        } else {
-            router.redirect('/inloggen');
+    if (!token) {
+        return router.redirect("/inloggen");
+    }
+
+    try {
+        const [header, payload, signature] = token.split(".");
+
+        const decodedPayload = JSON.parse(atob(payload));
+        if (!header || !payload || !signature) {
+            console.error("Invalid token structure")
         }
+
+        const currentTime = Date.now() / 1000;
+        if (decodedPayload.exp && decodedPayload.exp < currentTime) {
+            return router.redirect("/inloggen");
+        }
+
+        await next();
     } catch (error) {
-        console.error("Error checking authentication:", error);
-        router.redirect('/inloggen');
+        console.error("Error decoding token:", error);
+        return router.redirect("/inloggen");
     }
 }

@@ -2,28 +2,16 @@
     import router from 'page';
     import "./styles/app.css"
     import {authMiddleware} from "./middleware/auth";
-    import {isLoggedIn} from './stores/auth.js';
-
+    import isAuthenticated from './stores/auth.js';
     import Home from "./pages/Home.svelte";
     import Dashboard from "./pages/Dashboard.svelte";
     import Header from "./components/Header.svelte";
     import Login from "./pages/auth/Login.svelte";
     import Register from "./pages/auth/Register.svelte";
-    import {onDestroy} from "svelte";
 
     let page;
     let params;
     let currentRoute;
-
-    let loggedIn = false;
-
-    const unsubscribe = isLoggedIn.subscribe(value => {
-        loggedIn = value;
-    });
-
-    onDestroy(() => {
-        unsubscribe();
-    });
 
     router('/', (ctx) => {
         page = Home;
@@ -50,14 +38,9 @@
 
     router.start();
 </script>
-
-<main>
-    <Header active={currentRoute} loggedIn={loggedIn} />
+<header>
+    <Header active={currentRoute} />
+</header>
+<main class="bg-gray-50 min-h-[calc(100vh-80px)] py-12">
     <svelte:component this={page} {params}/>
 </main>
-
-<style>
-    main {
-        text-align: center;
-    }
-</style>

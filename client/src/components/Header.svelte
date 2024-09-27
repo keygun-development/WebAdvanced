@@ -1,19 +1,17 @@
 <script>
     import logo from "../assets/svelte.png";
     import router from "page"
-    import {isLoggedIn, checkAuth} from '../stores/auth.js';
+    import isAuthenticated from '../stores/auth.js';
 
     const logout = () => {
         localStorage.removeItem('token');
-        isLoggedIn.set(false);
-        checkAuth();
+        isAuthenticated.set(false);
         router.show('/inloggen');
     }
 
     export let active;
-    export let loggedIn;
 </script>
-<nav class="flex items-center justify-between h-[80px] md:px-10 mx-auto xl:px-20 2xl:max-w-[1280px] 2xl:px-0">
+<nav class="flex items-center justify-between h-20 md:px-10 mx-auto xl:px-20 2xl:max-w-[1280px] 2xl:px-0">
     <ul class="h-full">
         <li class="h-full">
             <a class="block h-full" href="/">
@@ -22,11 +20,11 @@
         </li>
     </ul>
     <ul class="flex space-x-2">
-        {#if !loggedIn}
+        {#if !$isAuthenticated}
             <li><a class:font-semibold={active === "/inloggen"} href="/inloggen">Inloggen</a></li>
             <li><a class:font-semibold={active === "/registreren"} href="/registreren">Registreren</a></li>
         {/if}
-        {#if loggedIn}
+        {#if $isAuthenticated}
             <li>
                 <button on:click={logout}>
                     Uitloggen

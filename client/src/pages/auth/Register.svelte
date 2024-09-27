@@ -1,5 +1,6 @@
 <script>
     import router from 'page';
+    import isAuthenticated from "../../stores/auth.js";
 
     let username = '';
     let password = '';
@@ -7,7 +8,7 @@
 
     async function registerUser() {
         try {
-            const response = await fetch('http://localhost:3000/auth/register', {
+            const response = await fetch('http://localhost:3000/auth', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -18,7 +19,23 @@
             const data = await response.json();
 
             if (response.ok) {
-                router.show('/inloggen');
+                const response = await fetch('http://localhost:3000/tokens', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('token', data.token);
+                    isAuthenticated.set(true)
+                    router.show('/dashboard');
+                } else {
+                    message = data.message;
+                }
             } else {
                 message = data.message || 'Error registering user.';
             }
@@ -28,7 +45,7 @@
     }
 </script>
 
-<div class="flex justify-center items-center bg-gray-100 min-h-[calc(100vh-80px)]">
+<div class="flex justify-center items-center">
     <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md my-4">
         <h2 class="text-2xl font-bold text-center mb-6">Registreren</h2>
         <form on:submit|preventDefault={registerUser} class="space-y-6">
