@@ -18,6 +18,10 @@
     "vite": "^4.4.9"
   },
   "dependencies": {
-    "page": "^1.11.6"
+    "bits-ui": "^0.21.15",
+    "clsx": "^2.1.1",
+    "page": "^1.11.6",
+    "tailwind-merge": "^2.5.2",
+    "tailwind-variants": "^0.2.1"
   }
 }

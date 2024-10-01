@@ -1,13 +1,20 @@
 import express from 'express';
 import games from "../data/games.js";
+
 const router = express.Router();
 
 router.get("/", async (req, res) => {
     return res.status(200).json(games);
 })
 
-router.get("/:id", async (req, res) => {
-  //TODO: return the game with the given id
+router.get("/:slug", async (req, res) => {
+    const foundGame = games.find(game => game.slug.toLowerCase() === req.params.slug.toLowerCase())
+
+    if (!foundGame) {
+        res.status(404).json({message: "Game not found."})
+    }
+
+    res.status(200).json(foundGame);
 })
 
 router.post("/", async (req, res) => {
@@ -15,7 +22,7 @@ router.post("/", async (req, res) => {
 })
 
 router.put("/:id", async (req, res) => {
-  //TODO: update the game with the given id
+    //TODO: update the game with the given id
 })
 
 router.delete("/:id", async (req, res) => {
