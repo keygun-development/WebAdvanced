@@ -7,4 +7,4 @@ export default [
         description: "A Shooter from the Call of Duty series",
         slug: "black-ops-2"
     }
-]
+];

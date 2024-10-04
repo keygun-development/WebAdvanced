@@ -19,7 +19,6 @@
 
             if (response.ok) {
                 localStorage.setItem('token', data.token);
-                isAuthenticated.set(true)
                 router.show('/dashboard');
             } else {
                 message = data.message;

@@ -1,25 +1,17 @@
 import router from "page"
+import {AccessToken} from "../hooks/AccessToken.js";
+import isAuthenticated from "../stores/auth.js";
 
 export async function authMiddleware(ctx, next) {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-        return router.redirect("/inloggen");
-    }
-
     try {
-        const [header, payload, signature] = token.split(".");
-
-        const decodedPayload = JSON.parse(atob(payload));
-        if (!header || !payload || !signature) {
-            console.error("Invalid token structure")
-        }
-
+        const token = new AccessToken();
         const currentTime = Date.now() / 1000;
-        if (decodedPayload.exp && decodedPayload.exp < currentTime) {
+
+        if (token.payload.exp && token.payload.exp < currentTime) {
             return router.redirect("/inloggen");
         }
 
+        isAuthenticated.set(true)
         await next();
     } catch (error) {
         console.error("Error decoding token:", error);
