@@ -28,6 +28,7 @@ router.post("/", async (req, res) => {
         res.status(200).json({token});
     } catch (error) {
         res.status(500).json({message: "Er is een fout opgetreden met het inloggen."});
+        throw error;
     }
 });
 

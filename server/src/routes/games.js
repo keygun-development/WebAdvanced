@@ -3,11 +3,18 @@ import games from "../data/games.js";
 
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get("/", (req, res) => {
+    const { genreId } = req.query;
+
+    if (genreId) {
+        const filteredGames = games.filter(game => game.genre === genreId);
+        return res.status(200).json(filteredGames);
+    }
+
     return res.status(200).json(games);
 });
 
-router.get("/:slug", async (req, res) => {
+router.get("/:slug", (req, res) => {
     const foundGame = games.find(game => game.slug.toLowerCase() === req.params.slug.toLowerCase());
 
     if (!foundGame) {

@@ -4,13 +4,13 @@ import {hash} from "bcrypt";
 
 const router = express.Router();
 
-async function createAdmin() {
+const createAdmin = async function () {
     try {
         users[0].password = await hash("password", 10);
     } catch (error) {
         console.error("Error met het aanmaken van admin:", error);
     }
-}
+};
 
 await createAdmin();
 
@@ -32,6 +32,7 @@ router.post("/", async (req, res) => {
         res.status(201).json({message: "Gebruiker is succesvol aangemaakt."});
     } catch (error) {
         res.status(500).json({message: "Er is een fout opgetreden met het aanmaken van de gebruiker."});
+        throw error;
     }
 });
 

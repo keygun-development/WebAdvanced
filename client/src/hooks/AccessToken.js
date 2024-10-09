@@ -3,7 +3,6 @@ export class AccessToken {
         this.payload = null;
         const token = localStorage.getItem("token");
         if (!token) {
-            console.error("No token found in local storage");
             return;
         }
 
@@ -19,5 +18,9 @@ export class AccessToken {
         } catch (e) {
             console.error("Error parsing token payload", e);
         }
+    }
+
+    remove() {
+        localStorage.removeItem("token");
     }
 }

@@ -4,13 +4,18 @@
     export let options;
     export let disabledOption;
     const dispatch = createEventDispatcher();
+
+    const handleChange = (e) => {
+        dispatch('change', { value: e.target.value });
+    };
 </script>
-<select on:change={(e) => dispatch('change', { value: e.target})} class="p-2 rounded border">
+
+<select on:change={handleChange} class="p-2 rounded border">
     {#if disabledOption}
-        <option selected={disabledOption.selected} value={disabledOption.value} disabled={true}>{disabledOption.label}</option>
+        <option selected={disabledOption.selected} value={disabledOption.value} disabled>{disabledOption.label}</option>
     {/if}
     {#each options as option}
-        <option value={option.value} selected={option.selected}>
+        <option value={option.label} selected={option.selected}>
             {option.label}
         </option>
     {/each}

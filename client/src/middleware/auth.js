@@ -5,9 +5,10 @@ import isAuthenticated from "../stores/auth.js";
 export async function authMiddleware(ctx, next) {
     try {
         const token = new AccessToken();
-        const currentTime = Date.now() / 1000;
+        const currentTime = Math.floor(Date.now() / 1000);
 
         if (token.payload.exp && token.payload.exp < currentTime) {
+            isAuthenticated.set(false);
             return router.redirect("/inloggen");
         }
 

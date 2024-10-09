@@ -29,7 +29,7 @@
     }
 </script>
 
-<div class="flex justify-center items-center">
+<div class="flex justify-center items-center w-full">
     <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md my-4">
         <h2 class="text-2xl font-bold text-center mb-6">Inloggen</h2>
         <form on:submit|preventDefault={loginUser} class="space-y-6">
