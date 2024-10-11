@@ -24,7 +24,7 @@ router.post("/", async (req, res) => {
             return res.status(401).json({message: "Ongeldige inloggegevens."});
         }
 
-        const token = jwt.sign({userId: user.id, username: user.username}, jwtSecret, {expiresIn: '1h'});
+        const token = jwt.sign({sub: {userId: user.id, username: user.username, role: user.role}}, jwtSecret, {expiresIn: '1h'});
         res.status(200).json({token});
     } catch (error) {
         res.status(500).json({message: "Er is een fout opgetreden met het inloggen."});

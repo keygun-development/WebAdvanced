@@ -2,7 +2,7 @@ import router from "page"
 import {AccessToken} from "../hooks/AccessToken.js";
 import isAuthenticated from "../stores/auth.js";
 
-export async function authMiddleware(ctx, next) {
+export async function adminMiddleware(ctx, next) {
     try {
         const token = new AccessToken();
         const currentTime = Math.floor(Date.now() / 1000);
@@ -14,6 +14,10 @@ export async function authMiddleware(ctx, next) {
         if (token.payload.exp && token.payload.exp < currentTime) {
             isAuthenticated.set(false);
             return router.redirect("/inloggen");
+        }
+
+        if (token.payload.sub.role !== "admin") {
+            return router.redirect("/mijn-profiel");
         }
 
         isAuthenticated.set(true)

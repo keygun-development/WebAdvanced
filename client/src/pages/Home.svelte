@@ -80,17 +80,20 @@
                 </p>
             </div>
         </div>
-        <div class="w-9/12">
+        <div class="w-9/12 grid grid-cols-3 gap-4">
             {#each games as game}
-                <div class="flex justify-between items-center border-b border-gray-300 py-2">
-                    <div>
+                <a href="/games/{game.slug}" class="relative group">
+                    <img class="w-full h-full relative inset-0" src={game.image} alt={game.name + " thumbnail afbeelding"} />
+                    <div class="absolute bottom-0 flex flex-col justify-end text-white px-4 h-0 overflow-hidden duration-300 transition-all group-hover:h-1/2 from-black bg-gradient-to-t to-transparent group-hover:py-4">
                         <h2 class="text-xl font-bold">{game.name}</h2>
                         <p>{game.description}</p>
                     </div>
                     <div>
-                        <a href="/games/{game.slug}" class="text-primary-500">View</a>
+                        <p class="text-white bg-secondary p-2 absolute top-0 right-0 rounded-bl-md">
+                            ${game.auction.currentPrice}
+                        </p>
                     </div>
-                </div>
+                </a>
             {/each}
         </div>
     </div>

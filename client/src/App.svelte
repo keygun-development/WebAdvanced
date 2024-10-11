@@ -3,7 +3,7 @@
     import "./styles/app.css"
     import {authMiddleware} from "./middleware/auth";
     import Home from "./pages/Home.svelte";
-    import Dashboard from "./pages/Dashboard.svelte";
+    import Dashboard from "./pages/auth/Dashboard.svelte";
     import Header from "./components/Header.svelte";
     import Login from "./pages/auth/Login.svelte";
     import Register from "./pages/auth/Register.svelte";
@@ -11,6 +11,8 @@
     import MyBids from "./pages/MyBids.svelte"
     import {AccessToken} from "./hooks/AccessToken";
     import isAuthenticated from "./stores/auth.js"
+    import MyProfile from "./pages/auth/MyProfile.svelte";
+    import {adminMiddleware} from "./middleware/admin.js";
 
     const token = new AccessToken();
     const currentTime = Math.floor(Date.now() / 1000);
@@ -45,8 +47,14 @@
         params = ctx;
     })
 
-    router('/dashboard', authMiddleware, (ctx) => {
+    router('/dashboard', adminMiddleware, (ctx) => {
         page = Dashboard;
+        currentRoute = ctx.pathname;
+        params = ctx;
+    })
+
+    router('/mijn-profiel', authMiddleware, (ctx) => {
+        page = MyProfile;
         currentRoute = ctx.pathname;
         params = ctx;
     })
@@ -66,7 +74,7 @@
     router.start();
 </script>
 <header class="bg-background shadow-2xl">
-    <Header active={currentRoute}/>
+    <Header user={token?.payload?.sub ?? ""} active={currentRoute}/>
 </header>
 <main class="flex flex-row bg-background/90 min-h-[calc(100vh-80px)]">
     <svelte:component this={page} {params}/>
