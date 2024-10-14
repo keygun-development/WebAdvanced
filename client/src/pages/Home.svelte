@@ -4,6 +4,7 @@
     import BidItem from "../components/BidItem.svelte";
 
     let games = [];
+    let filteredGames = [];
     let genres = [];
     const consoles = [
         {id: 1, name: "Playstation 5"},
@@ -13,10 +14,12 @@
     ]
 
     let selectedMaxPrice = 100;
+    let search = "";
 
     onMount(async () => {
         const responseGames = await fetch("http://localhost:3000/games")
         games = await responseGames.json();
+        filteredGames = games;
 
         const responseGenres = await fetch("http://localhost:3000/genres")
         genres = await responseGenres.json();
@@ -27,12 +30,19 @@
         games = await response.json();
     }
 
+    $: filteredGames = games.filter(game =>
+        game.name.toLowerCase().includes(search.toLowerCase())
+    );
+
     export let params;
 </script>
 <div class="md:px-10 mx-auto xl:px-20 2xl:max-w-[1280px] 2xl:px-0 w-full py-12 px-4">
-    <h1 class="text-4xl text-primary">
-        Games
-    </h1>
+    <div class="flex items-center justify-between">
+        <h1 class="text-4xl text-primary">
+            Games
+        </h1>
+        <input bind:value={search} placeholder="Zoek naar een game..." class="p-2 rounded"/>
+    </div>
     <div class="flex lg:flex-row flex-col gap-4 w-full mt-4">
         <div class="lg:w-3/12">
             <div class="bg-white rounded-md p-4 shadow-inset border-2 border-background space-y-4">
@@ -83,7 +93,7 @@
             </div>
         </div>
         <div class="lg:w-9/12 grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {#each games as game}
+            {#each filteredGames as game}
                 <BidItem item={game}/>
             {/each}
         </div>

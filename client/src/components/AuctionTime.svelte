@@ -1,23 +1,11 @@
 <script>
-    import {onMount} from "svelte";
+    import {onMount, onDestroy} from "svelte";
 
+    export let endDate;
     let remainingTime = "";
+    let intervalId;
 
-    onMount(() => {
-        updateRemainingTime(endDate);
-
-        const intervalId = setInterval(() => {
-            const now = new Date();
-            if (now >= endDate) {
-                clearInterval(intervalId);
-                remainingTime = "Bieding is afgelopen";
-            } else {
-                updateRemainingTime(endDate);
-            }
-        }, 1000);
-    })
-
-    function updateRemainingTime(endDate) {
+    function updateRemainingTime() {
         const now = new Date();
         const timeLeft = endDate.getTime() - now.getTime();
 
@@ -33,8 +21,19 @@
         }
     }
 
-    export let endDate;
+    onMount(() => {
+        updateRemainingTime();
+
+        intervalId = setInterval(() => {
+            updateRemainingTime();
+        }, 1000);
+    });
+
+    onDestroy(() => {
+        clearInterval(intervalId);
+    });
 </script>
+
 <p class="text-secondary">
     {#if remainingTime === "Bieding is afgelopen"}
         <span class="text-red-500">

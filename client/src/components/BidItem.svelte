@@ -26,7 +26,7 @@
         <AuctionTime endDate={new Date(item.auction.endDate)}/>
     </div>
     {#if $isAuthenticated}
-        <IncDecPrice item={item} />
+        <IncDecPrice item={item}/>
     {/if}
 </div>
 
