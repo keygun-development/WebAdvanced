@@ -96,18 +96,22 @@ router.post("/:id/bid", async (req, res) => {
             const gameId = req.params.id;
             const { price } = req.body;
 
-            if (!price) {
-                return res.status(400).json({ message: "Price is required" });
+            if (!price || isNaN(price)) {
+                return res.status(400).json({ message: "Price is required and must be a number" });
             }
 
             const game = games.find(game => game.id === parseInt(gameId));
             if (game) {
+                if (price <= game.auction.currentPrice) {
+                    return res.status(400).json({ message: "Price must be greater than the current price" });
+                }
                 game.auction.bidders.push({
                     name: authData.sub.username,
                     amount: price,
                 });
 
                 distributeBid(game.slug, authData.sub.username, price);
+                game.auction.currentPrice = price;
 
                 return res.status(200).json({ message: "Bid placed successfully" });
             } else {

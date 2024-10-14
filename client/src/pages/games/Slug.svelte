@@ -17,10 +17,9 @@
 
             eventSource.addEventListener("message", (event) => {
                 const newBidder = JSON.parse(event.data);
-
                 newBidder.newBidder = true;
-
                 sortedBidders = [newBidder, ...sortedBidders].sort((a, b) => b.amount - a.amount);
+                currentGame.auction.currentPrice = newBidder.amount;
 
                 setTimeout(() => {
                     sortedBidders = sortedBidders.map(bidder => ({
@@ -41,7 +40,8 @@
         };
 
         fetchData();
-        return () => {};
+        return () => {
+        };
     });
 
     export let params;
@@ -68,7 +68,8 @@
                     <IncDecPrice item={currentGame}/>
                 {:else}
                     <p class="text-white">
-                        U moet <a href="/inloggen" class="underline-offset-4 underline text-primary">inloggen</a> om te bieden.
+                        U moet <a href="/inloggen" class="underline-offset-4 underline text-primary">inloggen</a> om te
+                        bieden.
                     </p>
                 {/if}
             </div>

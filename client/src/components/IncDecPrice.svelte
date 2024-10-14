@@ -1,8 +1,16 @@
 <script>
     export let item;
-    let price = item?.auction?.currentPrice ?? 0;
+    let price = item?.auction.currentPrice ?? 0;
+    let error = null;
+    let success = null;
 
     const placeBid = async () => {
+        error = null;
+        success = null;
+        if (isNaN(price) || price <= item.auction.currentPrice) {
+            error = "De prijs moet een nummer zijn en hoger dan de huidige prijs.";
+            return;
+        }
         const response = await fetch(`http://localhost:3000/games/${item.id}/bid`, {
             method: 'POST',
             headers: {
@@ -12,10 +20,9 @@
             body: JSON.stringify({price}),
         });
 
-        console.log(response)
-
         if (response.ok) {
-            return response.json();
+            success = "Bod geplaatst!";
+            return;
         }
 
         throw new Error('Failed to place bid');
@@ -23,6 +30,16 @@
 </script>
 
 <div class="flex flex-col justify-end gap-2 mt-4">
+    {#if error}
+        <div class="bg-red-500 text-white p-2 rounded">
+            {error}
+        </div>
+    {/if}
+    {#if success}
+        <div class="bg-green-500 text-white p-2 rounded">
+            {success}
+        </div>
+    {/if}
     <div class="flex items-center justify-between">
         <button
                 class="bg-red-500 hover:bg-red-500/80 duration-300 p-2 text-white rounded">

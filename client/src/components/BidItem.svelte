@@ -25,8 +25,5 @@
     <div class="mt-2">
         <AuctionTime endDate={new Date(item.auction.endDate)}/>
     </div>
-    {#if $isAuthenticated}
-        <IncDecPrice item={item}/>
-    {/if}
 </div>
 
