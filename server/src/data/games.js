@@ -2,6 +2,7 @@ import genre from "./genres.js";
 
 export default [
     {
+        id: 1,
         name: "Black ops II",
         genre: genre[0].name,
         description: "A Shooter from the Call of Duty series",
@@ -28,6 +29,7 @@ export default [
         }
     },
     {
+        id: 2,
         name: "Minecraft",
         genre: genre[1].name,
         description: "A sandbox game",

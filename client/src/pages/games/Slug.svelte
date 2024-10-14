@@ -5,14 +5,44 @@
     import AuctionTime from "../../components/AuctionTime.svelte";
 
     let currentGame = {};
-    let endDate = new Date();
+    let sortedBidders = [];
 
-    onMount(async () => {
-        const response = await fetch("http://localhost:3000/games/" + params.params.slug)
-        currentGame = await response.json()
+    onMount(() => {
+        const fetchData = async () => {
+            const response = await fetch("http://localhost:3000/games/" + params.params.slug);
+            currentGame = await response.json();
+            sortedBidders = currentGame.auction.bidders.sort((a, b) => b.amount - a.amount);
 
-        endDate = new Date(currentGame.auction.endDate);
-    })
+            const eventSource = new EventSource(`http://localhost:3000/games/events/${params.params.slug}`);
+
+            eventSource.addEventListener("message", (event) => {
+                const newBidder = JSON.parse(event.data);
+
+                newBidder.newBidder = true;
+
+                sortedBidders = [newBidder, ...sortedBidders].sort((a, b) => b.amount - a.amount);
+
+                setTimeout(() => {
+                    sortedBidders = sortedBidders.map(bidder => ({
+                        ...bidder,
+                        newBidder: false
+                    }));
+                }, 1000);
+            });
+
+            eventSource.addEventListener("error", (event) => {
+                console.error("SSE error", event);
+                eventSource.close();
+            });
+
+            return () => {
+                eventSource.close();
+            };
+        };
+
+        fetchData();
+        return () => {};
+    });
 
     export let params;
 </script>
@@ -36,15 +66,15 @@
                 </div>
                 {#if $isAuthenticated}
                     <IncDecPrice item={currentGame}/>
-                    {:else}
+                {:else}
                     <p class="text-white">
                         U moet <a href="/inloggen" class="underline-offset-4 underline text-primary">inloggen</a> om te bieden.
                     </p>
                 {/if}
             </div>
             <div class="flex flex-col h-full max-h-[400px] divide-y overflow-auto bg-background/10">
-                {#each currentGame.auction.bidders.sort((a, b) => b.amount - a.amount) as bidder}
-                    <div class="flex justify-between items-center p-4 animate-fly-in duration-100">
+                {#each sortedBidders as bidder}
+                    <div class="flex justify-between items-center p-4 {bidder.newBidder ? 'animate-fly-in' : ''} duration-100">
                         <p class="text-white">
                             {bidder.name}
                         </p>
@@ -55,6 +85,5 @@
                 {/each}
             </div>
         </div>
-
     {/if}
 </div>

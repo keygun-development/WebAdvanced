@@ -2,7 +2,7 @@ import express from "express";
 import users from "../data/users.js";
 import {compare} from "bcrypt";
 import jwt from "jsonwebtoken";
-import jwtSecret from "../hooks/useGenerateSecret.js";
+import {jwtSecret} from "../hooks/jwtSecret.js";
 
 const router = express.Router();
 
