@@ -1,12 +1,14 @@
 <script>
     import isAuthenticated from "../stores/auth";
+    import IncDecPrice from "./IncDecPrice.svelte";
+    import AuctionTime from "./AuctionTime.svelte";
 
     export let item;
 </script>
 
-<div>
-    <a href="/games/{item.slug}" class="relative group aspect-square">
-        <img class="relative inset-0 object-contain w-full h-full bg-black/50 duration-300 transition-all group-hover:bg-black/80"
+<div class="relative flex flex-col">
+    <a href="/games/{item.slug}" class="relative group flex-1">
+        <img class="relative inset-0 object-cover w-full h-full bg-black/50 duration-300 transition-all group-hover:bg-black/80"
              src={item.image}
              alt={item.name + " thumbnail afbeelding"}/>
 
@@ -20,5 +22,11 @@
             </p>
         </div>
     </a>
+    <div class="mt-2">
+        <AuctionTime endDate={new Date(item.auction.endDate)}/>
+    </div>
+    {#if $isAuthenticated}
+        <IncDecPrice item={item} />
+    {/if}
 </div>
 

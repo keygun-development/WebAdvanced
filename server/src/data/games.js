@@ -9,9 +9,22 @@ export default [
         image: "/assets/games/black-ops-2.png",
         auction: {
             startingPrice: 0,
-            currentPrice: 5,
-            bids: 0,
-            endDate: new Date(2021, 11, 31, 23, 59, 59)
+            currentPrice: 10,
+            bidders: [
+                {
+                    name: "John Doe",
+                    amount: 5
+                },
+                {
+                    name: "John Doe",
+                    amount: 7
+                },
+                {
+                    name: "John Doe",
+                    amount: 10
+                }
+            ],
+            endDate: new Date(2024, 9, 14, 23, 59, 59)
         }
     },
     {
@@ -23,7 +36,12 @@ export default [
         auction: {
             startingPrice: 1,
             currentPrice: 3,
-            bids: 0,
+            bidders: [
+                {
+                    name: "John Doe",
+                    amount: 5
+                }
+            ],
             endDate: new Date(2021, 11, 31, 23, 59, 59)
         }
     }
