@@ -9,7 +9,7 @@ export async function authMiddleware(ctx, next) {
 
         if (!token.payload) {
             return router.redirect("/inloggen");
-        }
+        pm }
 
         if (token.payload.exp && token.payload.exp < currentTime) {
             isAuthenticated.set(false);

@@ -1,10 +1,10 @@
 export default [
     {
         id: 1,
-        name: "Action"
+        name: "Shooter"
     },
     {
         id: 2,
-        name: "Shooter"
+        name: "Adventure"
     }
 ];

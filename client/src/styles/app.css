@@ -3,14 +3,13 @@
 @tailwind utilities;
 
 @font-face {
-    font-family: 'KnightWarrior';
+    font-family: 'MinecraftRegular';
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url('../assets/KnightWarrior.otf');
+    src: url('../assets/MinecraftRegular.otf');
 }
 
 body {
-    font-family: 'KnightWarrior', sans-serif;
-    @apply tracking-wider;
+    font-family: 'MinecraftRegular', sans-serif;
 }

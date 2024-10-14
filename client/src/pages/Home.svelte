@@ -1,6 +1,7 @@
 <script>
     import {onMount} from 'svelte';
     import Select from "../components/Select.svelte"
+    import BidItem from "../components/BidItem.svelte";
 
     let games = [];
     let genres = [];
@@ -11,7 +12,7 @@
         {id: 4, name: "PC"},
     ]
 
-    let selectedMaxPrice = 500;
+    let selectedMaxPrice = 100;
 
     onMount(async () => {
         const responseGames = await fetch("http://localhost:3000/games")
@@ -28,12 +29,12 @@
 
     export let params;
 </script>
-<div class="md:px-10 mx-auto xl:px-20 2xl:max-w-[1280px] 2xl:px-0 w-full py-12">
-    <h1 class="text-3xl font-bold text-primary">
+<div class="md:px-10 mx-auto xl:px-20 2xl:max-w-[1280px] 2xl:px-0 w-full py-12 px-4">
+    <h1 class="text-4xl text-primary">
         Games
     </h1>
-    <div class="flex gap-4 w-full mt-4">
-        <div class="w-3/12">
+    <div class="flex lg:flex-row flex-col gap-4 w-full mt-4">
+        <div class="lg:w-3/12">
             <div class="bg-white rounded-md p-4 shadow-inset border-2 border-background space-y-4">
                 <p class="text-xl text-background">
                     Filters
@@ -71,29 +72,19 @@
                     Maximale Prijs:
                 </p>
                 <div class="flex justify-between items-center">
-                    <span id="minPrice" class="text-sm">$0</span>
-                    <input type="range" min="0" max="1000" class="range-input" bind:value={selectedMaxPrice} id="priceRange">
-                    <span id="maxPrice" class="text-sm">$1000</span>
+                    <span id="minPrice" class="text-sm">€0</span>
+                    <input type="range" min="0" max="200" class="range-input" bind:value={selectedMaxPrice}
+                           id="priceRange">
+                    <span id="maxPrice" class="text-sm">€200</span>
                 </div>
                 <p class="w-full text-center">
-                    ${selectedMaxPrice}
+                    €{selectedMaxPrice}
                 </p>
             </div>
         </div>
-        <div class="w-9/12 grid grid-cols-3 gap-4">
+        <div class="lg:w-9/12 grid sm:grid-cols-2 md:grid-cols-3 gap-4">
             {#each games as game}
-                <a href="/games/{game.slug}" class="relative group">
-                    <img class="w-full h-full relative inset-0" src={game.image} alt={game.name + " thumbnail afbeelding"} />
-                    <div class="absolute bottom-0 flex flex-col justify-end text-white px-4 h-0 overflow-hidden duration-300 transition-all group-hover:h-1/2 from-black bg-gradient-to-t to-transparent group-hover:py-4">
-                        <h2 class="text-xl font-bold">{game.name}</h2>
-                        <p>{game.description}</p>
-                    </div>
-                    <div>
-                        <p class="text-white bg-secondary p-2 absolute top-0 right-0 rounded-bl-md">
-                            ${game.auction.currentPrice}
-                        </p>
-                    </div>
-                </a>
+                <BidItem item={game}/>
             {/each}
         </div>
     </div>
