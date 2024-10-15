@@ -26,7 +26,7 @@ export default [
                     amount: 10
                 }
             ],
-            endDate: new Date(2024, 9, 14, 23, 59, 59)
+            endDate: new Date(2024, 9, 15, 23, 59, 59)
         }
     },
     {

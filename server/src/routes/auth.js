@@ -4,15 +4,16 @@ import {hash} from "bcrypt";
 
 const router = express.Router();
 
-const createAdmin = async function () {
+const createUsers = async function () {
     try {
         users[0].password = await hash("password", 10);
+        users[1].password = await hash("password", 10);
     } catch (error) {
-        console.error("Error met het aanmaken van admin:", error);
+        console.error("Error met het aanmaken van gebruikers:", error);
     }
 };
 
-await createAdmin();
+await createUsers();
 
 router.post("/", async (req, res) => {
     const {username, password} = req.body;

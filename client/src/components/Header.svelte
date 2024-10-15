@@ -22,6 +22,7 @@
     };
 
     export let active;
+    //@TODO: Get user from store
     export let user;
 </script>
 <div class="flex items-center justify-between h-20 md:px-10 mx-auto xl:px-20 2xl:max-w-[1280px] 2xl:px-0 px-4">
@@ -52,7 +53,7 @@
                                 Mijn profiel
                             </a>
                         </li>
-                        {#if user.role === "admin"}
+                        {#if user.role.includes("admin")}
                             <li class="py-2 px-4">
                                 <a class="flex" href="/dashboard">
                                     Dashboard

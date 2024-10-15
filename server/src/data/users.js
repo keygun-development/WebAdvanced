@@ -7,5 +7,13 @@ export default [
             "admin",
             "bidder"
         ]
+    },
+    {
+        id: 2,
+        username: "user",
+        password: "",
+        role: [
+            "bidder"
+        ]
     }
 ];
