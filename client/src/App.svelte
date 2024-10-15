@@ -8,9 +8,8 @@
     import Login from "./pages/auth/Login.svelte";
     import Register from "./pages/auth/Register.svelte";
     import GameSlug from "./pages/games/Slug.svelte"
-    import MyBids from "./pages/MyBids.svelte"
     import {AccessToken} from "./hooks/AccessToken";
-    import isAuthenticated from "./stores/auth.js"
+    import {isAuthenticated, user} from "./stores/auth.js"
     import MyProfile from "./pages/auth/MyProfile.svelte";
     import {adminMiddleware} from "./middleware/admin.js";
 
@@ -19,10 +18,12 @@
 
     if (token.payload) {
         isAuthenticated.set(true);
+        user.set(token.payload.sub);
     }
 
     if (token.payload && token.payload.exp && token.payload.exp < currentTime) {
         isAuthenticated.set(false);
+        user.set(null)
         token.remove();
     }
 
@@ -61,12 +62,6 @@
 
     router('/games/:slug', (ctx) => {
         page = GameSlug;
-        currentRoute = ctx.pathname;
-        params = ctx;
-    })
-
-    router('/mijn-biedingen', (ctx) => {
-        page = MyBids;
         currentRoute = ctx.pathname;
         params = ctx;
     })

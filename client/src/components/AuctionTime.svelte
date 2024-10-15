@@ -34,7 +34,7 @@
     });
 </script>
 
-<p class="text-secondary">
+<p>
     {#if remainingTime === "Bieding is afgelopen"}
         <span class="text-red-500">
             {remainingTime}

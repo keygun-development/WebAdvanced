@@ -1,3 +1,6 @@
 import {writable} from 'svelte/store';
 
-export default writable(false);
+const isAuthenticated = writable(false);
+const user = writable(null);
+
+export {isAuthenticated, user};

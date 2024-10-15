@@ -1,11 +1,14 @@
 <script>
     import {onMount} from "svelte"
-    import isAuthenticated from "../../stores/auth.js";
+    import {isAuthenticated, user} from "../../stores/auth.js";
     import IncDecPrice from "../../components/IncDecPrice.svelte";
     import AuctionTime from "../../components/AuctionTime.svelte";
+    import Dialog from "../../components/Dialog.svelte";
+    import router from "page";
 
     let currentGame = {};
     let sortedBidders = [];
+    let dialogIsShowing = false;
 
     onMount(() => {
         const fetchData = async () => {
@@ -44,14 +47,43 @@
         };
     });
 
+    const removeItem = async (id) => {
+        const response = await fetch("http://localhost:3000/games/" + id, {
+            method: "DELETE",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem("token")
+            }
+        });
+
+        if (response.ok) {
+            router.show('/');
+        }
+    }
+
     export let params;
 </script>
 
 <div class="md:px-10 mx-auto xl:px-20 2xl:max-w-[1280px] 2xl:px-0 w-full py-12 px-4">
     {#if Object.keys(currentGame).length > 0}
-        <h1 class="text-4xl text-primary">
-            {currentGame.name}
-        </h1>
+        <div class="flex items-center justify-between">
+            <h1 class="text-4xl text-primary">
+                {currentGame.name}
+            </h1>
+            {#if $user !== null && $user.role.includes("admin")}
+                <div class="flex items-center space-x-2">
+                    <a href={"/dashboard/auctions/"+currentGame.slug}
+                       class="text-white bg-blue-400 hover:bg-blue-400/90 py-2 px-4 rounded duration-300 transition-all">
+                        Bewerken
+                    </a>
+                    <button
+                            on:click={() => dialogIsShowing = true}
+                            class="text-white bg-red-500 hover:bg-red-500/90 py-2 px-4 rounded duration-300 transition-all">
+                        Verwijderen
+                    </button>
+                </div>
+            {/if}
+        </div>
         <div class="grid md:grid-cols-3 flex-col md:flex-row mt-4 gap-4">
             <div class="relative w-full flex-1">
                 <img src={currentGame.image} alt={currentGame.name}
@@ -93,5 +125,23 @@
                 {/each}
             </div>
         </div>
+    {/if}
+    {#if dialogIsShowing}
+        <Dialog>
+            <p class="text-center">
+                Weet u zeker dat u {currentGame.name} wilt verwijderen als bieding?
+            </p>
+            <div class="flex space-x-2 items-center justify-center mt-2">
+                <button
+                        on:click={() => removeItem(currentGame.id)}
+                        class="py-2 px-4 bg-red-500 hover:bg-red-500/90 duration-300 transition-all text-white">
+                    Verwijderen
+                </button>
+                <button class="py-2 px-4 bg-green-500 hover:bg-green-500/90 duration-300 transition-all text-white"
+                        on:click={() => dialogIsShowing = false}>
+                    Annuleren
+                </button>
+            </div>
+        </Dialog>
     {/if}
 </div>

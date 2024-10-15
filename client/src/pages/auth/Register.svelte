@@ -1,6 +1,5 @@
 <script>
     import router from 'page';
-    import isAuthenticated from "../../stores/auth.js";
 
     let username = '';
     let password = '';

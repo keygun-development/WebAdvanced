@@ -1,7 +1,8 @@
 <script>
     import {onMount} from 'svelte';
     import Select from "../components/Select.svelte"
-    import BidItem from "../components/BidItem.svelte";
+    import AuctionItem from "../components/AuctionItem.svelte";
+    import Toast from "../components/Toast.svelte";
 
     let games = [];
     let filteredGames = [];
@@ -32,7 +33,7 @@
         if (value !== "") {
             filters = [...filters, {filter, value}];
         }
-        const response = await fetch("http://localhost:3000/games?"+filters.map(f => `${f.filter}=${f.value}`).join("&"));
+        const response = await fetch("http://localhost:3000/games?" + filters.map(f => `${f.filter}=${f.value}`).join("&"));
         filteredGames = await response.json();
     }
 
@@ -45,7 +46,7 @@
     export let params;
 </script>
 <div class="md:px-10 mx-auto xl:px-20 2xl:max-w-[1280px] 2xl:px-0 w-full py-12 px-4">
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between flex-wrap">
         <h1 class="text-4xl text-primary">
             Games
         </h1>
@@ -120,9 +121,15 @@
             </div>
         </div>
         <div class="lg:w-9/12 grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {#each filteredGames as game}
-                <BidItem item={game}/>
-            {/each}
+            {#if filteredGames.length > 0}
+                {#each filteredGames as game}
+                    <AuctionItem item={game}/>
+                {/each}
+            {:else}
+                <Toast variant="error">
+                    Geen games gevonden
+                </Toast>
+            {/if}
         </div>
     </div>
 </div>

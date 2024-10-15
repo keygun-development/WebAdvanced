@@ -1,7 +1,7 @@
 <script>
     import router from "page";
     import logo from "../assets/logo.png";
-    import isAuthenticated from '../stores/auth.js';
+    import {isAuthenticated, user} from '../stores/auth.js';
     import {AccessToken} from "../hooks/AccessToken.js";
 
     let dropDown;
@@ -10,6 +10,7 @@
     const logout = () => {
         token.remove();
         isAuthenticated.set(false);
+        user.set(null);
         router.show('/inloggen');
     }
 
@@ -22,8 +23,6 @@
     };
 
     export let active;
-    //@TODO: Get user from store
-    export let user;
 </script>
 <div class="flex items-center justify-between h-20 md:px-10 mx-auto xl:px-20 2xl:max-w-[1280px] 2xl:px-0 px-4">
     <a class="flex items-center h-full" href="/">
@@ -40,8 +39,6 @@
                        href="/registreren">Registreren</a></li>
             {/if}
             {#if $isAuthenticated}
-                <li><a class:underline={active === "/mijn-biedingen"} class="text-primary" href="/mijn-biedingen">Mijn
-                    biedingen</a></li>
                 <li class="relative">
                     <button class="text-secondary" on:click={showDropDown}>
                         Mijn account
@@ -53,7 +50,7 @@
                                 Mijn profiel
                             </a>
                         </li>
-                        {#if user.role.includes("admin")}
+                        {#if $user && $user.role.includes("admin")}
                             <li class="py-2 px-4">
                                 <a class="flex" href="/dashboard">
                                     Dashboard
@@ -84,12 +81,12 @@
 
         <div
                 class="h-0.5 w-full bg-white left-0 transition-all duration-300 absolute top-[2px]"
-                class:-left-[20px]={isOpen}
+                class:!-left-[20px]={isOpen}
                 class:opacity-0={isOpen}
         ></div>
 
         <div
-                class="h-0.5 w-full bg-white transition-all duration-300 absolute top-[8px]"
+                class="h-0.5 w-full bg-white transition-all duration-300 absolute"
                 class:top-[3px]={isOpen}
                 class:-rotate-45={isOpen}
         ></div>
@@ -108,12 +105,19 @@
                        href="/registreren">Registreren</a></li>
             {/if}
             {#if $isAuthenticated}
-                <li><a class:underline={active === "/mijn-biedingen"} class="text-primary p-4 flex"
-                       href="/mijn-biedingen">Mijn
-                    biedingen</a></li>
-                <li><a class:underline={active === "/mijn-profiel"} class="text-primary p-4 flex"
-                       href="/mijn-biedingen">Mijn
-                    profiel</a></li>
+                <li>
+                    <a class:underline={active === "/mijn-profiel"} class="text-primary p-4 flex"
+                       href="/mijn-biedingen">
+                        Mijn profiel
+                    </a>
+                </li>
+                {#if $user && $user.role.includes("admin")}
+                    <li>
+                        <a class:underline={active === "/dashboard"} class="text-primary p-4 flex" href="/dashboard">
+                            Dashboard
+                        </a>
+                    </li>
+                {/if}
                 <li>
                     <button class="w-full text-left text-primary p-4 flex" on:click={logout}>
                         Uitloggen

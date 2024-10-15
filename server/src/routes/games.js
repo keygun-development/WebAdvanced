@@ -59,7 +59,33 @@ router.put("/:id", async (req, res) => {
 });
 
 router.delete("/:id", async (req, res) => {
-    //TODO: delete the game with the given id
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(403).json({message: "Forbidden: No token provided"});
+    }
+
+    const token = authHeader.split(' ')[1];
+
+    jwt.verify(token, jwtSecret, async (err, authData) => {
+        if (err) {
+            return res.status(403).json({message: "Forbidden: Invalid token"});
+        } else {
+            if (!authData.sub.role.includes('admin')) {
+                return res.status(403).json({message: "Forbidden: You are not authorized to delete a game"});
+            }
+
+            const gameId = req.params.id;
+            const gameIndex = games.findIndex(game => game.id === parseInt(gameId));
+
+            if (gameIndex !== -1) {
+                games.splice(gameIndex, 1);
+                return res.status(200).json({message: "Game deleted successfully"});
+            } else {
+                return res.status(404).json({message: "Game not found"});
+            }
+        }
+    });
 });
 
 router.get("/events/:slug", (req, res) => {
