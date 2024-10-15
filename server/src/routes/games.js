@@ -21,14 +21,21 @@ function distributeBid(slug, username, price) {
 }
 
 router.get("/", (req, res) => {
-    const {genreId} = req.query;
+    const {genreId, producer} = req.query;
+    let filteredGames = games;
 
     if (genreId) {
-        const filteredGames = games.filter(game => game.genre === genreId);
-        return res.status(200).json(filteredGames);
+        filteredGames = games.filter(game => game.genre === genreId);
     }
 
-    return res.status(200).json(games);
+    if(producer) {
+        filteredGames = genreId ?
+            filteredGames.filter(game => game.producer === producer) :
+            games.filter(game => game.producer === producer);
+    }
+
+
+    return res.status(200).json(filteredGames);
 });
 
 router.get("/:slug", (req, res) => {

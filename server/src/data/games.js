@@ -8,6 +8,7 @@ export default [
         description: "A Shooter from the Call of Duty series",
         slug: "black-ops-2",
         image: "/assets/games/black-ops-2.png",
+        producer: "Treyarch",
         auction: {
             startingPrice: 0,
             currentPrice: 10,
@@ -35,6 +36,7 @@ export default [
         description: "A sandbox game",
         slug: "minecraft",
         image: "/assets/games/minecraft.avif",
+        producer: "Mojang",
         auction: {
             startingPrice: 1,
             currentPrice: 3,

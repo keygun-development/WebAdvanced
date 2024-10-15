@@ -6,6 +6,7 @@
     let games = [];
     let filteredGames = [];
     let genres = [];
+    let producers = [];
     const consoles = [
         {id: 1, name: "Playstation 5"},
         {id: 2, name: "Xbox Series X"},
@@ -20,14 +21,19 @@
         const responseGames = await fetch("http://localhost:3000/games")
         games = await responseGames.json();
         filteredGames = games;
-
-        const responseGenres = await fetch("http://localhost:3000/genres")
-        genres = await responseGenres.json();
     });
+
+    $: genres = Array.from(new Set(games.map(game => game.genre).filter(Boolean)));
+    $: producers = Array.from(new Set(games.map(game => game.producer).filter(Boolean)));
 
     const filterByGenre = async (genreName) => {
         const response = await fetch(`http://localhost:3000/games?genreId=${genreName}`)
-        games = await response.json();
+        filteredGames = await response.json();
+    }
+
+    const filterByProducer = async (producer) => {
+        const response = await fetch(`http://localhost:3000/games?producer=${producer}`)
+        filteredGames = await response.json();
     }
 
     $: filteredGames = games.filter(game =>
@@ -59,8 +65,8 @@
                         options={
                             genres.map(genre => {
                                 return {
-                                    value: genre.id,
-                                    label: genre.name
+                                    value: genre,
+                                    label: genre
                                 }
                             })
                         }
@@ -74,6 +80,22 @@
                                 return {
                                     value: console.id,
                                     label: console.name
+                                }
+                            })
+                        }
+                />
+                <Select
+                        on:change={(e) => {
+                            filterByProducer(e.detail.value)
+                        }}
+                        disabledOption={
+                        {value: "", label: "Filter op uitgever", selected: true}
+                        }
+                        options={
+                            producers.map(producer => {
+                                return {
+                                    value: producer,
+                                    label: producer
                                 }
                             })
                         }
