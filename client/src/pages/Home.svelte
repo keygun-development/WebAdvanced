@@ -7,13 +7,8 @@
     let filteredGames = [];
     let genres = [];
     let producers = [];
-    const consoles = [
-        {id: 1, name: "Playstation 5"},
-        {id: 2, name: "Xbox Series X"},
-        {id: 3, name: "Nintendo Switch"},
-        {id: 4, name: "PC"},
-    ]
-
+    let filters = [];
+    let consoles = [];
     let selectedMaxPrice = 100;
     let search = "";
 
@@ -21,21 +16,28 @@
         const responseGames = await fetch("http://localhost:3000/games")
         games = await responseGames.json();
         filteredGames = games;
+        games.forEach(game => {
+            game.consoles.forEach(console => {
+                if (!consoles.some(c => c === console)) {
+                    consoles = [...consoles, console];
+                }
+            });
+        });
     });
+
+    const addFilter = async (filter, value) => {
+        if (filters.some(f => f.filter === filter)) {
+            filters = filters.filter(f => f.filter !== filter);
+        }
+        if (value !== "") {
+            filters = [...filters, {filter, value}];
+        }
+        const response = await fetch("http://localhost:3000/games?"+filters.map(f => `${f.filter}=${f.value}`).join("&"));
+        filteredGames = await response.json();
+    }
 
     $: genres = Array.from(new Set(games.map(game => game.genre).filter(Boolean)));
     $: producers = Array.from(new Set(games.map(game => game.producer).filter(Boolean)));
-
-    const filterByGenre = async (genreName) => {
-        const response = await fetch(`http://localhost:3000/games?genreId=${genreName}`)
-        filteredGames = await response.json();
-    }
-
-    const filterByProducer = async (producer) => {
-        const response = await fetch(`http://localhost:3000/games?producer=${producer}`)
-        filteredGames = await response.json();
-    }
-
     $: filteredGames = games.filter(game =>
         game.name.toLowerCase().includes(search.toLowerCase())
     );
@@ -57,7 +59,7 @@
                 </p>
                 <Select
                         on:change={(e) => {
-                            filterByGenre(e.detail.value)
+                            addFilter('genre', e.detail.value)
                         }}
                         disabledOption={
                         {value: "", label: "Filter op genre", selected: true}
@@ -72,21 +74,24 @@
                         }
                 />
                 <Select
+                        on:change={(e) => {
+                            addFilter('console', e.detail.value)
+                        }}
                         disabledOption={
                         {value: "", label: "Filter op console", selected: true}
                         }
                         options={
                             consoles.map(console => {
                                 return {
-                                    value: console.id,
-                                    label: console.name
+                                    value: console,
+                                    label: console
                                 }
                             })
                         }
                 />
                 <Select
                         on:change={(e) => {
-                            filterByProducer(e.detail.value)
+                            addFilter('producer', e.detail.value)
                         }}
                         disabledOption={
                         {value: "", label: "Filter op uitgever", selected: true}

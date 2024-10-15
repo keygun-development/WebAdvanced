@@ -64,13 +64,20 @@
                         {currentGame.description}
                     </p>
                 </div>
-                {#if $isAuthenticated}
-                    <IncDecPrice item={currentGame}/>
-                {:else}
+                {#if new Date(currentGame.auction.endDate) < new Date()}
                     <p class="text-white">
-                        U moet <a href="/inloggen" class="underline-offset-4 underline text-primary">inloggen</a> om te
-                        bieden.
+                        De bieding is verlopen u kunt niet meer bieden.
                     </p>
+                {:else}
+                    {#if $isAuthenticated}
+                        <IncDecPrice item={currentGame}/>
+                    {:else}
+                        <p class="text-white">
+                            U moet <a href="/inloggen" class="underline-offset-4 underline text-primary">inloggen</a> om
+                            te
+                            bieden.
+                        </p>
+                    {/if}
                 {/if}
             </div>
             <div class="flex flex-col h-full max-h-[400px] divide-y overflow-auto bg-background/10">

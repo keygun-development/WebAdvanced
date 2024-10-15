@@ -9,6 +9,11 @@ export default [
         slug: "black-ops-2",
         image: "/assets/games/black-ops-2.png",
         producer: "Treyarch",
+        consoles: [
+            "Xbox 360",
+            "Playstation 3",
+            "PC"
+        ],
         auction: {
             startingPrice: 0,
             currentPrice: 10,
@@ -37,6 +42,13 @@ export default [
         slug: "minecraft",
         image: "/assets/games/minecraft.avif",
         producer: "Mojang",
+        consoles: [
+            "Xbox 360",
+            "Playstation 3",
+            "PC",
+            "Playstation 4",
+            "Xbox one"
+        ],
         auction: {
             startingPrice: 1,
             currentPrice: 3,
