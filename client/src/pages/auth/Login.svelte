@@ -1,6 +1,6 @@
 <script>
     import router from 'page';
-    let username = '';
+    let email = '';
     let password = '';
     let message = '';
 
@@ -11,7 +11,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ email, password }),
             });
 
             const data = await response.json();
@@ -33,10 +33,10 @@
         <h2 class="text-2xl font-bold text-center mb-6">Inloggen</h2>
         <form on:submit|preventDefault={loginUser} class="space-y-6">
             <div>
-                <label for="username" class="block text-sm font-medium text-gray-700">Gebruikersnaam</label>
-                <input id="username" type="text" bind:value={username}
+                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input id="email" type="email" bind:value={email}
                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                       placeholder="Vul je gebruikersnaam in" />
+                       placeholder="Vul je email in" />
             </div>
 
             <div>

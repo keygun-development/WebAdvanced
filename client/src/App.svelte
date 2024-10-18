@@ -83,7 +83,7 @@
     router.start();
 </script>
 <header class="bg-background shadow-2xl">
-    <Header user={token?.payload?.sub ?? ""} active={currentRoute}/>
+    <Header active={currentRoute}/>
 </header>
 <main class="flex flex-row bg-background/90 min-h-[calc(100vh-80px)]">
     <svelte:component this={page} {params}/>

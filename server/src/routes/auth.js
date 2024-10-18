@@ -16,9 +16,13 @@ const createUsers = async function () {
 await createUsers();
 
 router.post("/", async (req, res) => {
-    const {username, password} = req.body;
+    const {username, password, email} = req.body;
     if (!username || !password) {
         return res.status(400).send("Gebruikersnaam en wachtwoord zijn verplicht.");
+    }
+
+    if (users.some(user => user.email.toLowerCase() === email.toLowerCase())) {
+        return res.status(400).json({message: "Email bestaat al."});
     }
 
     if (users.some(user => user.username.toLowerCase() === username.toLowerCase())) {
@@ -28,7 +32,7 @@ router.post("/", async (req, res) => {
     try {
         const hashedPassword = await hash(password, 10);
 
-        const user = {id: users.length + 1, username, password: hashedPassword};
+        const user = {id: users.length + 1, username, email, password: hashedPassword};
         users.push(user);
         res.status(201).json({message: "Gebruiker is succesvol aangemaakt."});
     } catch (error) {

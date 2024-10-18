@@ -1,6 +1,7 @@
 export default [
     {
         id: 1,
+        email: "admin@gameveilingen.nl",
         username: "admin",
         password: "",
         role: [
@@ -10,6 +11,7 @@ export default [
     },
     {
         id: 2,
+        email: "user@gameveilingen.nl",
         username: "user",
         password: "",
         role: [

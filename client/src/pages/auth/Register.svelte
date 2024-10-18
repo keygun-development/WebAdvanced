@@ -2,6 +2,7 @@
     import router from 'page';
 
     let username = '';
+    let email = '';
     let password = '';
     let message = '';
 
@@ -12,7 +13,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ username, password, email }),
             });
 
             const data = await response.json();
@@ -23,7 +24,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ username, password }),
+                    body: JSON.stringify({ username, password, email }),
                 });
 
                 const data = await response.json();
@@ -52,6 +53,12 @@
                 <input id="username" type="text" bind:value={username}
                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                        placeholder="Vul je gebruikersnaam in" required />
+            </div>
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">E-mailadres</label>
+                <input id="email" type="email" bind:value={email}
+                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                       placeholder="Vul je e-mailadres in" required />
             </div>
 
             <div>

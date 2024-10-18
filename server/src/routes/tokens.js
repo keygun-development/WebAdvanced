@@ -7,13 +7,13 @@ import {jwtSecret} from "../hooks/jwtSecret.js";
 const router = express.Router();
 
 router.post("/", async (req, res) => {
-    const {username, password} = req.body;
+    const {email, password} = req.body;
 
-    if (!username || !password) {
-        return res.status(400).json({message: "Gebruikersnaam en wachtwoord zijn verplicht."});
+    if (!password || !email) {
+        return res.status(400).json({message: "Email en wachtwoord zijn verplicht."});
     }
 
-    const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
     if (!user) {
         return res.status(401).json({message: "Ongeldige inloggegevens."});
     }
@@ -24,7 +24,7 @@ router.post("/", async (req, res) => {
             return res.status(401).json({message: "Ongeldige inloggegevens."});
         }
 
-        const token = jwt.sign({sub: {userId: user.id, username: user.username, role: user.role}}, jwtSecret, {expiresIn: '1h'});
+        const token = jwt.sign({sub: {userId: user.id, username: user.username, email: user.email, role: user.role}}, jwtSecret, {expiresIn: '1h'});
         res.status(200).json({token});
     } catch (error) {
         res.status(500).json({message: "Er is een fout opgetreden met het inloggen."});
