@@ -18,7 +18,7 @@
         <h1 class="text-primary text-4xl">
             Dashboard
         </h1>
-        <a href="/dashboard/auctions" class="bg-secondary p-4 text-white py-2 rounded hover:bg-secondary/90 duration-300 transition-all">
+        <a href="/dashboard/auctions/new" class="bg-secondary p-4 text-white py-2 rounded hover:bg-secondary/90 duration-300 transition-all">
             Nieuwe veiling
         </a>
     </div>

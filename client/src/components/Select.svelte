@@ -3,6 +3,8 @@
 
     export let options;
     export let disabledOption;
+    export let name;
+
     const dispatch = createEventDispatcher();
 
     const handleChange = (e) => {
@@ -10,7 +12,7 @@
     };
 </script>
 
-<select on:change={handleChange} class="p-2 rounded border">
+<select name={name ?? ""} on:change={handleChange} class="p-2 rounded border">
     {#if disabledOption}
         <option selected={disabledOption.selected} value={disabledOption.value} disabled>{disabledOption.label}</option>
     {/if}

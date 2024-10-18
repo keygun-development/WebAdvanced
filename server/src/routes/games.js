@@ -51,7 +51,44 @@ router.get("/:slug", (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-    //TODO: add a new game
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(403).json({message: "Forbidden: No token provided"});
+    }
+
+    const token = authHeader.split(' ')[1];
+
+    jwt.verify(token, jwtSecret, async (err, authData) => {
+        if (err) {
+            return res.status(403).json({message: "Forbidden: Invalid token"});
+        } else {
+            if (!authData.sub.role.includes('admin')) {
+                return res.status(403).json({message: "Forbidden: You are not authorized to create a game"});
+            }
+
+            const {consoles, endDate, startingPrice, producer, genre, title, image, description} = req.body;
+            const newGame = {
+                id: games.length + 1,
+                name: title,
+                image,
+                description,
+                slug: title.toLowerCase().replace(/ /g, "-"),
+                genre,
+                producer,
+                consoles: consoles.split(","),
+                auction: {
+                    endDate,
+                    startingPrice,
+                    currentPrice: startingPrice,
+                    bidders: []
+                }
+            };
+
+            games.push(newGame);
+            return res.status(201).json({message: "Game created successfully"});
+        }
+    });
 });
 
 router.put("/:id", async (req, res) => {

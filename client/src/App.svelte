@@ -9,6 +9,7 @@
     import Register from "./pages/auth/Register.svelte";
     import GameSlug from "./pages/games/Slug.svelte"
     import GameEdit from "./pages/games/Edit.svelte"
+    import GameNew from "./pages/games/New.svelte"
     import {AccessToken} from "./hooks/AccessToken";
     import {isAuthenticated, user} from "./stores/auth.js"
     import MyProfile from "./pages/auth/MyProfile.svelte";
@@ -51,6 +52,12 @@
 
     router('/dashboard', adminMiddleware, (ctx) => {
         page = Dashboard;
+        currentRoute = ctx.pathname;
+        params = ctx;
+    })
+
+    router('/dashboard/auctions/new', adminMiddleware, (ctx) => {
+        page = GameNew;
         currentRoute = ctx.pathname;
         params = ctx;
     })

@@ -47,8 +47,6 @@
             })
         });
 
-        console.log(response)
-
         if (response.ok) {
             currentGame.title = formData.get("title");
             currentGame.image = formData.get("image");
