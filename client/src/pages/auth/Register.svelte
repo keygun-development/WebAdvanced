@@ -1,5 +1,6 @@
 <script>
     import router from 'page';
+    import Button from "../../components/Button.svelte";
 
     let username = '';
     let email = '';
@@ -67,15 +68,15 @@
                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                        placeholder="Vul je wachtwoord in" required />
             </div>
-
-            <div>
-                <button type="submit"
-                        class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <p class="text-xs text-gray-500">
+                Heb je al een account? <a class="underline" href="/inloggen">Log hier in.</a>
+            </p>
+            <div class="flex justify-end">
+                <Button type="submit" variant="blue">
                     Registreren
-                </button>
+                </Button>
             </div>
         </form>
-
         <p class="text-center text-red-500 mt-4">{message}</p>
     </div>
 </div>

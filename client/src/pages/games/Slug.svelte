@@ -5,6 +5,7 @@
     import AuctionTime from "../../components/AuctionTime.svelte";
     import Dialog from "../../components/Dialog.svelte";
     import router from "page";
+    import Button from "../../components/Button.svelte";
 
     let currentGame = {};
     let sortedBidders = [];
@@ -72,15 +73,10 @@
             </h1>
             {#if $user !== null && $user.role.includes("admin")}
                 <div class="flex items-center space-x-2">
-                    <a href={"/games/"+currentGame.slug+"/edit"}
-                       class="text-white bg-blue-400 hover:bg-blue-400/90 py-2 px-4 rounded duration-300 transition-all">
-                        Bewerken
-                    </a>
-                    <button
-                            on:click={() => dialogIsShowing = true}
-                            class="text-white bg-red-500 hover:bg-red-500/90 py-2 px-4 rounded duration-300 transition-all">
+                    <Button as="a" variant="blue" href={"/games/"+currentGame.slug+"/edit"}>Bewerken</Button>
+                    <Button on:click={() => dialogIsShowing = true} variant="error">
                         Verwijderen
-                    </button>
+                    </Button>
                 </div>
             {/if}
         </div>
@@ -132,15 +128,12 @@
                 Weet u zeker dat u {currentGame.name} wilt verwijderen als bieding?
             </p>
             <div class="flex space-x-2 items-center justify-center mt-2">
-                <button
-                        on:click={() => removeItem(currentGame.id)}
-                        class="py-2 px-4 bg-red-500 hover:bg-red-500/90 duration-300 transition-all text-white">
+                <Button variant="error" on:click={() => removeItem(currentGame.id)}>
                     Verwijderen
-                </button>
-                <button class="py-2 px-4 bg-green-500 hover:bg-green-500/90 duration-300 transition-all text-white"
-                        on:click={() => dialogIsShowing = false}>
+                </Button>
+                <Button on:click={() => dialogIsShowing = false} variant="success">
                     Annuleren
-                </button>
+                </Button>
             </div>
         </Dialog>
     {/if}

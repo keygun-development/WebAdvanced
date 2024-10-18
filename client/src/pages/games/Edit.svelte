@@ -1,6 +1,7 @@
 <script>
     import {onMount} from "svelte";
     import Dialog from "../../components/Dialog.svelte";
+    import Button from "../../components/Button.svelte";
 
     let currentGame = {};
     let dialogIsShowing = false;
@@ -145,19 +146,15 @@
                 Weet u zeker dat u de bieding van {dialogBidder.name} van €{dialogBidder.amount} wilt verwijderen?
             </p>
             <div class="flex space-x-2 items-center justify-center mt-2">
-                <button
-                        on:click={() => removeBidder(dialogBidder.id)}
-                        class="py-2 px-4 bg-red-500 hover:bg-red-500/90 duration-300 transition-all text-white">
+                <Button variant="error" on:click={() => removeBidder(dialogBidder.id)}>
                     Verwijderen
-                </button>
-                <button type="button"
-                        class="py-2 px-4 bg-green-500 hover:bg-green-500/90 duration-300 transition-all text-white"
-                        on:click={(event) =>  {
-                            event.preventDefault()
-                            dialogIsShowing = false
-                        }}>
+                </Button>
+                <Button on:click={(event) => {
+                    event.preventDefault()
+                    dialogIsShowing = false
+                }} variant="success">
                     Annuleren
-                </button>
+                </Button>
             </div>
         </Dialog>
     {/if}

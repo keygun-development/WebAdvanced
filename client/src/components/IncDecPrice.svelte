@@ -1,5 +1,6 @@
 <script>
     import Toast from "./Toast.svelte";
+    import Button from "./Button.svelte";
 
     export let item;
     let price = item?.auction.currentPrice ?? 0;
@@ -43,19 +44,19 @@
         </Toast>
     {/if}
     <div class="flex items-center justify-between">
-        <button
+        <Button
                 on:click={() => price = Math.max(price - 1, item.auction.currentPrice)}
-                class="bg-red-500 hover:bg-red-500/80 duration-300 p-2 text-white rounded">
+                variant="error">
             -€1
-        </button>
+        </Button>
         <input type="number" class="max-w-20 p-2 rounded" bind:value={price}/>
-        <button
+        <Button
                 on:click={() => price = Math.max(price + 1, item.auction.currentPrice)}
-                class="bg-green-500 hover:bg-green-500/80 duration-300 p-2 text-white rounded">
+                variant="success">
             +€1
-        </button>
+        </Button>
     </div>
-    <button on:click={placeBid} class="p-2 bg-blue-400 text-white hover:bg-blue-500 duration-300">
+    <Button variant="secondary" on:click={placeBid}>
         Plaats bieding
-    </button>
+    </Button>
 </div>

@@ -1,6 +1,7 @@
 <script>
     import {onMount} from "svelte";
     import AuctionItem from "../../components/AuctionItem.svelte";
+    import Button from "../../components/Button.svelte";
 
     let expiredAuctions = [];
     let activeAuctions = [];
@@ -18,9 +19,9 @@
         <h1 class="text-primary text-4xl">
             Dashboard
         </h1>
-        <a href="/dashboard/auctions/new" class="bg-secondary p-4 text-white py-2 rounded hover:bg-secondary/90 duration-300 transition-all">
+        <Button as="a" href="/dashboard/auctions/new" variant="success">
             Nieuwe veiling
-        </a>
+        </Button>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
         <div class="bg-background/90 p-4 rounded">
