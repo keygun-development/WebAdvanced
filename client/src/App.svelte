@@ -8,6 +8,7 @@
     import Login from "./pages/auth/Login.svelte";
     import Register from "./pages/auth/Register.svelte";
     import GameSlug from "./pages/games/Slug.svelte"
+    import GameEdit from "./pages/games/Edit.svelte"
     import {AccessToken} from "./hooks/AccessToken";
     import {isAuthenticated, user} from "./stores/auth.js"
     import MyProfile from "./pages/auth/MyProfile.svelte";
@@ -62,6 +63,12 @@
 
     router('/games/:slug', (ctx) => {
         page = GameSlug;
+        currentRoute = ctx.pathname;
+        params = ctx;
+    })
+
+    router('/games/:slug/edit', adminMiddleware, (ctx) => {
+        page = GameEdit;
         currentRoute = ctx.pathname;
         params = ctx;
     })

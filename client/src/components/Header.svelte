@@ -26,7 +26,7 @@
 </script>
 <div class="flex items-center justify-between h-20 md:px-10 mx-auto xl:px-20 2xl:max-w-[1280px] 2xl:px-0 px-4">
     <a class="flex items-center h-full" href="/">
-        <img class="inline-flex h-full" src={logo} alt="Svelte Logo"/>
+        <img class="inline-flex h-full" src={logo} alt="Gameveilingen logo"/>
         <p class="md:text-4xl text-2xl text-primary">
             Game <span class="text-secondary">Veilingen</span>
         </p>

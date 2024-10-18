@@ -72,7 +72,7 @@
             </h1>
             {#if $user !== null && $user.role.includes("admin")}
                 <div class="flex items-center space-x-2">
-                    <a href={"/dashboard/auctions/"+currentGame.slug}
+                    <a href={"/games/"+currentGame.slug+"/edit"}
                        class="text-white bg-blue-400 hover:bg-blue-400/90 py-2 px-4 rounded duration-300 transition-all">
                         Bewerken
                     </a>

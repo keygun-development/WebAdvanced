@@ -37,7 +37,7 @@
             <p class="text-xl text-white">
                 Verlopen biedingen
             </p>
-            <div class="grid grid-cols-1 md:grid-cols-2 mt-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4">
                 {#each expiredAuctions as game}
                     <AuctionItem item={game}/>
                 {/each}
