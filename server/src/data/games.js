@@ -19,19 +19,22 @@ export default [
             currentPrice: 10,
             bidders: [
                 {
+                    id: 1,
                     name: "John Doe",
                     amount: 5
                 },
                 {
+                    id: 2,
                     name: "John Doe",
                     amount: 7
                 },
                 {
+                    id: 3,
                     name: "John Doe",
                     amount: 10
                 }
             ],
-            endDate: new Date(2024, 9, 16, 23, 59, 59)
+            endDate: new Date(2024, 9, 19, 23, 59, 59)
         }
     },
     {

@@ -55,7 +55,37 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/:id", async (req, res) => {
-    //TODO: update the game with the given id
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(403).json({message: "Forbidden: No token provided"});
+    }
+
+    const token = authHeader.split(' ')[1];
+
+    jwt.verify(token, jwtSecret, async (err, authData) => {
+        if (err) {
+            return res.status(403).json({message: "Forbidden: Invalid token"});
+        } else {
+            if (!authData.sub.role.includes('admin')) {
+                return res.status(403).json({message: "Forbidden: You are not authorized to update a game"});
+            }
+
+            const {title, image, description, auction} = req.body;
+            const gameId = req.params.id;
+            const game = games.find(game => game.id === parseInt(gameId));
+            if (game) {
+                game.name = title;
+                game.image = image;
+                game.description = description;
+                game.auction.endDate = auction.endDate;
+
+                return res.status(200).json({message: "Game updated successfully"});
+            } else {
+                return res.status(404).json({message: "Game not found"});
+            }
+        }
+    });
 });
 
 router.delete("/:id", async (req, res) => {
@@ -81,6 +111,41 @@ router.delete("/:id", async (req, res) => {
             if (gameIndex !== -1) {
                 games.splice(gameIndex, 1);
                 return res.status(200).json({message: "Game deleted successfully"});
+            } else {
+                return res.status(404).json({message: "Game not found"});
+            }
+        }
+    });
+});
+
+router.delete("/:id/bidders/:bidderId", async (req, res) => {
+    const {id, bidderId} = req.params;
+
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(403).json({message: "Forbidden: No token provided"});
+    }
+
+    const token = authHeader.split(' ')[1];
+
+    jwt.verify(token, jwtSecret, async (err, authData) => {
+        if (err) {
+            return res.status(403).json({message: "Forbidden: Invalid token"});
+        } else {
+            if (!authData.sub.role.includes('admin')) {
+                return res.status(403).json({message: "Forbidden: You are not authorized to delete a bid"});
+            }
+
+            const game = games.find(game => game.id === parseInt(id));
+            if (game) {
+                const bidderIndex = game.auction.bidders.findIndex(bidder => bidder.id === parseInt(bidderId));
+                if (bidderIndex !== -1) {
+                    game.auction.bidders.splice(bidderIndex, 1);
+                    return res.status(200).json({message: "Bidder deleted successfully"});
+                } else {
+                    return res.status(404).json({message: "Bidder not found"});
+                }
             } else {
                 return res.status(404).json({message: "Game not found"});
             }

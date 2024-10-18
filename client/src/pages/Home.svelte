@@ -16,6 +16,8 @@
     onMount(async () => {
         const responseGames = await fetch("http://localhost:3000/games")
         games = await responseGames.json();
+        const now = new Date();
+        games = games.filter(game => new Date(game.auction.endDate) > now);
         filteredGames = games;
         games.forEach(game => {
             game.consoles.forEach(console => {

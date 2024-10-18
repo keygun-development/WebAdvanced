@@ -1,18 +1,18 @@
 <script>
     import {onMount} from "svelte";
-    import router from "page";
     import Dialog from "../../components/Dialog.svelte";
 
     let currentGame = {};
     let dialogIsShowing = false;
+    let dialogBidder = null;
 
     onMount(async () => {
         const response = await fetch("http://localhost:3000/games/" + params.params.slug);
         currentGame = await response.json();
     })
 
-    const removeItem = async (id) => {
-        const response = await fetch("http://localhost:3000/games/" + id, {
+    const removeBidder = async (id) => {
+        const response = await fetch("http://localhost:3000/games/" + currentGame.id + "/bidders/" + id, {
             method: "DELETE",
             headers: {
                 'Content-Type': 'application/json',
@@ -21,15 +21,40 @@
         });
 
         if (response.ok) {
-            router.show('/');
+            currentGame.auction.bidders = currentGame.auction.bidders.filter(b => b.id !== id)
+            dialogIsShowing = false
         }
     }
 
     const handleSubmit = async (event) => {
         event.preventDefault()
         const formData = new FormData(event.target);
+        const endDate = formData.get("endDate") ?? currentGame.auction.endDate;
 
-        console.log(formData.get("image"))
+        const response = await fetch("http://localhost:3000/games/" + currentGame.id, {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem("token")
+            },
+            body: JSON.stringify({
+                title: formData.get("title"),
+                image: formData.get("image"),
+                description: formData.get("description"),
+                auction: {
+                    endDate: new Date(endDate).toISOString()
+                }
+            })
+        });
+
+        console.log(response)
+
+        if (response.ok) {
+            currentGame.title = formData.get("title");
+            currentGame.image = formData.get("image");
+            currentGame.description = formData.get("description");
+            currentGame.auction.endDate = new Date(endDate).toISOString();
+        }
     }
 
     export let params;
@@ -41,8 +66,16 @@
         </h1>
         <form on:submit={handleSubmit} class="flex flex-col mt-4" method="POST">
             <div class="grid md:grid-cols-3 gap-4">
-                <div class="relative w-full flex-1">
-                    <label for="image" class="text-white">
+                <div class="relative w-full flex flex-col">
+                    <label for="title" class="text-white">
+                        Titel van game:
+                    </label>
+                    <input name="title"
+                           class="p-2 rounded w-full mt-2"
+                           value={currentGame.name}
+                           type="text"
+                           placeholder="Titel van game"/>
+                    <label for="image" class="text-white mt-4">
                         Afbeelding (via url):
                     </label>
                     <input name="image"
@@ -53,11 +86,12 @@
                 </div>
                 <div class="flex flex-col justify-between">
                     <div>
-                        <label for="image" class="text-white">
+                        <label for="endDate" class="text-white">
                             Eind datum/tijd
                         </label>
                         <input
-                                class="p-2 rounded w-full mt-2"
+                                class="p-2 rounded w-full mt-2 mb-4"
+                                name="endDate"
                                 value={new Date(currentGame.auction.endDate).toLocaleString("sv-SE", {
             year: 'numeric',
             month: '2-digit',
@@ -67,12 +101,13 @@
         }).replace(' ', 'T')}
                                 type="datetime-local"
                         />
-                        <p class="text-white">
+                        <label for="description" class="text-white">
                             Beschrijving:
-                        </p>
+                        </label>
                         <textarea
                                 class="p-2 rounded w-full mt-2"
                                 rows="4"
+                                name="description"
                                 placeholder="Beschrijving"
                         >{currentGame.description}</textarea>
                     </div>
@@ -87,7 +122,10 @@
                                 <p class="text-white">
                                     €{bidder.amount}
                                 </p>
-                                <button type="button" on:click={() => dialogIsShowing = true} class="bg-red-500 hover:bg-red-500/80 duration-300 p-2 text-white rounded">
+                                <button type="button" on:click={() => {
+                                    dialogIsShowing = true
+                                    dialogBidder = bidder
+                                }} class="bg-red-500 hover:bg-red-500/80 duration-300 p-2 text-white rounded">
                                     Verwijderen
                                 </button>
                             </div>
@@ -106,18 +144,19 @@
     {#if dialogIsShowing}
         <Dialog>
             <p class="text-center">
-                Weet u zeker dat u {currentGame.name} wilt verwijderen als bieding?
+                Weet u zeker dat u de bieding van {dialogBidder.name} van €{dialogBidder.amount} wilt verwijderen?
             </p>
             <div class="flex space-x-2 items-center justify-center mt-2">
                 <button
-                        on:click={() => removeItem(currentGame.id)}
+                        on:click={() => removeBidder(dialogBidder.id)}
                         class="py-2 px-4 bg-red-500 hover:bg-red-500/90 duration-300 transition-all text-white">
                     Verwijderen
                 </button>
-                <button type="button" class="py-2 px-4 bg-green-500 hover:bg-green-500/90 duration-300 transition-all text-white"
+                <button type="button"
+                        class="py-2 px-4 bg-green-500 hover:bg-green-500/90 duration-300 transition-all text-white"
                         on:click={(event) =>  {
                             event.preventDefault()
-                            dialogIsShowing = true
+                            dialogIsShowing = false
                         }}>
                     Annuleren
                 </button>

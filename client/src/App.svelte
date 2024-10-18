@@ -1,6 +1,6 @@
 <script>
     import router from 'page';
-    import "./styles/app.css"
+    import "./app.css"
     import {authMiddleware} from "./middleware/auth";
     import Home from "./pages/Home.svelte";
     import Dashboard from "./pages/auth/Dashboard.svelte";
