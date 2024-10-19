@@ -39,17 +39,17 @@
                        href="/registreren">Registreren</a></li>
             {/if}
             {#if $isAuthenticated}
+                <li>
+                    <a class:underline={active === "/mijn-biedingen"} class="text-primary" href="/mijn-biedingen">
+                        Mijn biedingen
+                    </a>
+                </li>
                 <li class="relative">
                     <button class="text-secondary" on:click={showDropDown}>
                         Mijn account
                     </button>
                     <ul class="hidden absolute bg-white divide-y divide-black w-40 rounded shadow-inner mt-2"
                         bind:this={dropDown}>
-                        <li class="py-2 px-4">
-                            <a class="flex" href="/mijn-profiel">
-                                Mijn profiel
-                            </a>
-                        </li>
                         {#if $user && $user.role.includes("admin")}
                             <li class="py-2 px-4">
                                 <a class="flex" href="/dashboard">
@@ -105,12 +105,6 @@
                        href="/registreren">Registreren</a></li>
             {/if}
             {#if $isAuthenticated}
-                <li>
-                    <a class:underline={active === "/mijn-profiel"} class="text-primary p-4 flex"
-                       href="/mijn-biedingen">
-                        Mijn profiel
-                    </a>
-                </li>
                 {#if $user && $user.role.includes("admin")}
                     <li>
                         <a class:underline={active === "/dashboard"} class="text-primary p-4 flex" href="/dashboard">

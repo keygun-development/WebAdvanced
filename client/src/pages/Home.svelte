@@ -1,5 +1,5 @@
 <script>
-    import {onMount} from 'svelte';
+    import {onDestroy, onMount} from 'svelte';
     import Select from "../components/Select.svelte"
     import AuctionItem from "../components/AuctionItem.svelte";
     import Toast from "../components/Toast.svelte";
@@ -10,8 +10,10 @@
     let producers = [];
     let filters = [];
     let consoles = [];
-    let selectedMaxPrice = 100;
+    let selectedMaxPrice = 20;
     let search = "";
+    let eventSources = [];
+    let limit = 10;
 
     onMount(async () => {
         const responseGames = await fetch("http://localhost:3000/games")
@@ -26,6 +28,7 @@
                 }
             });
         });
+        subscribeToGameUpdates(filteredGames);
     });
 
     const addFilter = async (filter, value) => {
@@ -37,15 +40,50 @@
         }
         const response = await fetch("http://localhost:3000/games?" + filters.map(f => `${f.filter}=${f.value}`).join("&"));
         filteredGames = await response.json();
+
+        unsubscribeFromGameUpdates();
+
+        subscribeToGameUpdates(filteredGames);
     }
+
+    const subscribeToGameUpdates = (games) => {
+        games.forEach(game => {
+            const eventSource = new EventSource(`http://localhost:3000/games/events/${game.slug}`);
+
+            eventSource.addEventListener("message", (event) => {
+                const updatedData = JSON.parse(event.data);
+                const gameIndex = filteredGames.findIndex(g => g.slug === updatedData.slug);
+
+                if (gameIndex !== -1) {
+                    filteredGames[gameIndex].auction.currentPrice = updatedData.amount;
+                    filteredGames = [...filteredGames];
+                }
+            });
+
+            eventSource.addEventListener("error", () => {
+                eventSource.close();
+            });
+
+            eventSources.push(eventSource);
+        });
+    };
+
+    const unsubscribeFromGameUpdates = () => {
+        eventSources.forEach(source => source.close());
+        eventSources = [];
+    };
+
+    onDestroy(() => {
+        unsubscribeFromGameUpdates();
+    });
 
     $: genres = Array.from(new Set(games.map(game => game.genre).filter(Boolean)));
     $: producers = Array.from(new Set(games.map(game => game.producer).filter(Boolean)));
     $: filteredGames = games.filter(game =>
         game.name.toLowerCase().includes(search.toLowerCase())
     );
-
-    export let params;
+    $: filteredGames = games.filter(game => game.auction.currentPrice <= selectedMaxPrice);
+    $: filteredGames = games.slice(0, limit);
 </script>
 <div class="md:px-10 mx-auto xl:px-20 2xl:max-w-[1280px] 2xl:px-0 w-full py-12 px-4">
     <div class="flex items-center justify-between flex-wrap">
@@ -113,18 +151,33 @@
                 </p>
                 <div class="flex justify-between items-center">
                     <span id="minPrice" class="text-sm">€0</span>
-                    <input type="range" min="0" max="200" class="range-input" bind:value={selectedMaxPrice}
+                    <input type="range"
+                           min="0"
+                           max="100"
+                           class="range-input"
+                           bind:value={selectedMaxPrice}
                            id="priceRange">
-                    <span id="maxPrice" class="text-sm">€200</span>
+                    <span id="maxPrice" class="text-sm">€100</span>
                 </div>
                 <p class="w-full text-center">
                     €{selectedMaxPrice}
                 </p>
+                <p>
+                    Limiteer resultaten:
+                </p>
+                <input
+                        min="1"
+                        on:change={() => addFilter('limit', limit)}
+                        placeholder="10"
+                        bind:value={limit}
+                        type="number"
+                        class="p-2 rounded border mt-2"
+                />
             </div>
         </div>
         <div class="lg:w-9/12 grid sm:grid-cols-2 md:grid-cols-3 gap-4">
             {#if filteredGames.length > 0}
-                {#each filteredGames as game}
+                {#each filteredGames.sort((a, b) => new Date(a.auction.endDate).getTime() - new Date(b.auction.endDate).getTime()) as game}
                     <AuctionItem item={game}/>
                 {/each}
             {:else}

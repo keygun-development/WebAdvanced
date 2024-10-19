@@ -2,7 +2,7 @@ import express from "express";
 import users from "../data/users.js";
 import {compare} from "bcrypt";
 import jwt from "jsonwebtoken";
-import {jwtSecret} from "../hooks/jwtSecret.js";
+import {jwtSecret} from "../jwtSecret.js";
 
 const router = express.Router();
 
@@ -15,7 +15,7 @@ router.post("/", async (req, res) => {
 
     const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
     if (!user) {
-        return res.status(401).json({message: "Ongeldige inloggegevens."});
+        return res.status(401).json({message: "Er is geen gebruiker gevonden met dat emailadres."});
     }
 
     try {

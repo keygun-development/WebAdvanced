@@ -3,7 +3,7 @@
     import "./app.css"
     import {authMiddleware} from "./middleware/auth";
     import Home from "./pages/Home.svelte";
-    import Dashboard from "./pages/auth/Dashboard.svelte";
+    import Dashboard from "./pages/Dashboard.svelte";
     import Header from "./components/Header.svelte";
     import Login from "./pages/auth/Login.svelte";
     import Register from "./pages/auth/Register.svelte";
@@ -12,7 +12,7 @@
     import GameNew from "./pages/games/New.svelte"
     import {AccessToken} from "./hooks/AccessToken";
     import {isAuthenticated, user} from "./stores/auth.js"
-    import MyProfile from "./pages/auth/MyProfile.svelte";
+    import MyBids from "./pages/MyBids.svelte";
     import {adminMiddleware} from "./middleware/admin.js";
 
     const token = new AccessToken();
@@ -30,8 +30,8 @@
     }
 
     let page;
-    let params;
     let currentRoute;
+    let params;
 
     router('/', (ctx) => {
         page = Home;
@@ -41,31 +41,26 @@
     router('/inloggen', (ctx) => {
         page = Login;
         currentRoute = ctx.pathname;
-        params = ctx;
     })
 
     router('/registreren', (ctx) => {
         page = Register;
         currentRoute = ctx.pathname;
-        params = ctx;
     })
 
     router('/dashboard', adminMiddleware, (ctx) => {
         page = Dashboard;
         currentRoute = ctx.pathname;
-        params = ctx;
     })
 
     router('/dashboard/auctions/new', adminMiddleware, (ctx) => {
         page = GameNew;
         currentRoute = ctx.pathname;
-        params = ctx;
     })
 
-    router('/mijn-profiel', authMiddleware, (ctx) => {
-        page = MyProfile;
+    router('/mijn-biedingen', authMiddleware, (ctx) => {
+        page = MyBids;
         currentRoute = ctx.pathname;
-        params = ctx;
     })
 
     router('/games/:slug', (ctx) => {
@@ -77,7 +72,6 @@
     router('/games/:slug/edit', adminMiddleware, (ctx) => {
         page = GameEdit;
         currentRoute = ctx.pathname;
-        params = ctx;
     })
 
     router.start();

@@ -1,15 +1,15 @@
 import express from 'express';
 import games from "../data/games.js";
-import {jwtSecret} from "../hooks/jwtSecret.js";
-import jwt from "jsonwebtoken";
+import {AuthService} from "../services/AuthService.js";
 
 const channels = new Map();
 const router = express.Router();
 
-function distributeBid(slug, username, price) {
+const distributeBid = (slug, username, price) => {
     const bid = {
         name: username,
-        amount: price
+        amount: price,
+        slug: slug
     };
 
     const channel = channels.get(slug);
@@ -18,10 +18,10 @@ function distributeBid(slug, username, price) {
             stream.write(`data: ${JSON.stringify(bid)}\n\n`);
         }
     }
-}
+};
 
 router.get("/", (req, res) => {
-    const {genre, producer, console} = req.query;
+    const {genre, producer, console, limit} = req.query;
     let filteredGames = games;
 
     if (genre) {
@@ -36,6 +36,10 @@ router.get("/", (req, res) => {
         filteredGames = filteredGames.filter(game => game.consoles.includes(console));
     }
 
+    if (limit) {
+        filteredGames = filteredGames.slice(0, parseInt(limit));
+    }
+
     return res.status(200).json(filteredGames);
 });
 
@@ -44,150 +48,126 @@ router.get("/:slug", (req, res) => {
     const foundGame = games.find(game => game.slug.toLowerCase() === slug.toLowerCase());
 
     if (!foundGame) {
-        res.status(404).json({message: "Game not found."});
+        res.status(404).json({message: "Game niet gevonden."});
     }
 
     res.status(200).json(foundGame);
 });
 
 router.post("/", async (req, res) => {
-    const authHeader = req.headers.authorization;
+    try {
+        const token = AuthService.getToken(req);
+        const authData = await AuthService.verifyToken(token);
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(403).json({message: "Forbidden: No token provided"});
-    }
+        AuthService.checkRole(authData, 'admin');
+        const {consoles, endDate, startingPrice, producer, genre, title, image, description} = req.body;
 
-    const token = authHeader.split(' ')[1];
-
-    jwt.verify(token, jwtSecret, async (err, authData) => {
-        if (err) {
-            return res.status(403).json({message: "Forbidden: Invalid token"});
-        } else {
-            if (!authData.sub.role.includes('admin')) {
-                return res.status(403).json({message: "Forbidden: You are not authorized to create a game"});
-            }
-
-            const {consoles, endDate, startingPrice, producer, genre, title, image, description} = req.body;
-            const newGame = {
-                id: games.length + 1,
-                name: title,
-                image,
-                description,
-                slug: title.toLowerCase().replace(/ /g, "-"),
-                genre,
-                producer,
-                consoles: consoles.split(","),
-                auction: {
-                    endDate,
-                    startingPrice,
-                    currentPrice: startingPrice,
-                    bidders: []
-                }
-            };
-
-            games.push(newGame);
-            return res.status(201).json({message: "Game created successfully"});
+        if (!title || !producer || !endDate || !startingPrice || !consoles) {
+            return res.status(400).json({message: "Niet alle verplichte velden zijn ingevuld."});
         }
-    });
+
+        if (isNaN(startingPrice)) {
+            return res.status(400).json({message: "De startprijs moet een getal zijn."});
+        }
+
+        if (games.find(g => g.name === title)) {
+            return res.status(400).json({ message: "Er bestaat al een game met deze naam." });
+        }
+
+
+        const newGame = {
+            id: games.length + 1,
+            name: title,
+            image,
+            description,
+            slug: title.toLowerCase().replace(/ /g, "-"),
+            genre,
+            producer,
+            consoles: consoles.split(","),
+            auction: {
+                endDate,
+                startingPrice,
+                currentPrice: startingPrice,
+                bidders: []
+            }
+        };
+
+        games.push(newGame);
+        return res.status(200).json({message: "Game toegevoegd."});
+    } catch (e) {
+        return res.status(401).json({message: e.message});
+    }
 });
 
 router.put("/:id", async (req, res) => {
-    const authHeader = req.headers.authorization;
+    try {
+        const token = AuthService.getToken(req);
+        const authData = await AuthService.verifyToken(token);
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(403).json({message: "Forbidden: No token provided"});
-    }
+        AuthService.checkRole(authData, 'admin');
 
-    const token = authHeader.split(' ')[1];
+        const {title, image, description, auction} = req.body;
+        const gameId = req.params.id;
+        const game = games.find(game => game.id === parseInt(gameId));
+        if (game) {
+            game.name = title;
+            game.image = image;
+            game.description = description;
+            game.auction.endDate = auction.endDate;
 
-    jwt.verify(token, jwtSecret, async (err, authData) => {
-        if (err) {
-            return res.status(403).json({message: "Forbidden: Invalid token"});
+            return res.status(200).json({message: "Game geüpdatet"});
         } else {
-            if (!authData.sub.role.includes('admin')) {
-                return res.status(403).json({message: "Forbidden: You are not authorized to update a game"});
-            }
-
-            const {title, image, description, auction} = req.body;
-            const gameId = req.params.id;
-            const game = games.find(game => game.id === parseInt(gameId));
-            if (game) {
-                game.name = title;
-                game.image = image;
-                game.description = description;
-                game.auction.endDate = auction.endDate;
-
-                return res.status(200).json({message: "Game updated successfully"});
-            } else {
-                return res.status(404).json({message: "Game not found"});
-            }
+            return res.status(404).json({message: "Game niet gevonden"});
         }
-    });
+    } catch (error) {
+        return res.status(401).json({message: error.message});
+    }
 });
 
 router.delete("/:id", async (req, res) => {
-    const authHeader = req.headers.authorization;
+    try {
+        const token = AuthService.getToken(req);
+        const authData = await AuthService.verifyToken(token);
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(403).json({message: "Forbidden: No token provided"});
-    }
+        AuthService.checkRole(authData, 'admin');
 
-    const token = authHeader.split(' ')[1];
+        const gameId = req.params.id;
+        const gameIndex = games.findIndex(game => game.id === parseInt(gameId));
 
-    jwt.verify(token, jwtSecret, async (err, authData) => {
-        if (err) {
-            return res.status(403).json({message: "Forbidden: Invalid token"});
+        if (gameIndex !== -1) {
+            games.splice(gameIndex, 1);
+            return res.status(200).json({message: "Game verwijderd."});
         } else {
-            if (!authData.sub.role.includes('admin')) {
-                return res.status(403).json({message: "Forbidden: You are not authorized to delete a game"});
-            }
-
-            const gameId = req.params.id;
-            const gameIndex = games.findIndex(game => game.id === parseInt(gameId));
-
-            if (gameIndex !== -1) {
-                games.splice(gameIndex, 1);
-                return res.status(200).json({message: "Game deleted successfully"});
-            } else {
-                return res.status(404).json({message: "Game not found"});
-            }
+            return res.status(404).json({message: "Game niet gevonden"});
         }
-    });
+    } catch (e) {
+        return res.status(401).json({message: e.message});
+    }
 });
 
 router.delete("/:id/bidders/:bidderId", async (req, res) => {
-    const {id, bidderId} = req.params;
+    try {
+        const token = AuthService.getToken(req);
+        const authData = await AuthService.verifyToken(token);
 
-    const authHeader = req.headers.authorization;
+        AuthService.checkRole(authData, 'admin');
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(403).json({message: "Forbidden: No token provided"});
-    }
-
-    const token = authHeader.split(' ')[1];
-
-    jwt.verify(token, jwtSecret, async (err, authData) => {
-        if (err) {
-            return res.status(403).json({message: "Forbidden: Invalid token"});
-        } else {
-            if (!authData.sub.role.includes('admin')) {
-                return res.status(403).json({message: "Forbidden: You are not authorized to delete a bid"});
-            }
-
-            const game = games.find(game => game.id === parseInt(id));
-            if (game) {
-                const bidderIndex = game.auction.bidders.findIndex(bidder => bidder.id === parseInt(bidderId));
-                if (bidderIndex !== -1) {
-                    game.auction.bidders.splice(bidderIndex, 1);
-                    return res.status(200).json({message: "Bidder deleted successfully"});
-                } else {
-                    return res.status(404).json({message: "Bidder not found"});
-                }
+        const {id, bidderId} = req.params;
+        const game = games.find(game => game.id === parseInt(id));
+        if (game) {
+            const bidderIndex = game.auction.bidders.findIndex(bidder => bidder.id === parseInt(bidderId));
+            if (bidderIndex !== -1) {
+                game.auction.bidders.splice(bidderIndex, 1);
+                return res.status(200).json({message: "Bieder verwijderd"});
             } else {
-                return res.status(404).json({message: "Game not found"});
+                return res.status(404).json({message: "Bieder niet gevonden"});
             }
+        } else {
+            return res.status(404).json({message: "Game niet gevonden"});
         }
-    });
+    } catch (e) {
+        return res.status(401).json({message: e.message});
+    }
 });
 
 router.get("/events/:slug", (req, res) => {
@@ -213,48 +193,41 @@ router.get("/events/:slug", (req, res) => {
 });
 
 router.post("/:id/bid", async (req, res) => {
-    const authHeader = req.headers.authorization;
+    try {
+        const token = AuthService.getToken(req);
+        const authData = await AuthService.verifyToken(token);
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(403).json({message: "Forbidden: No token provided"});
-    }
+        AuthService.checkRole(authData, 'bidder');
 
-    const token = authHeader.split(' ')[1];
+        const gameId = req.params.id;
+        const {price} = req.body;
 
-    jwt.verify(token, jwtSecret, async (err, authData) => {
-        if (err) {
-            return res.status(403).json({message: "Forbidden: Invalid token"});
-        } else {
-            if (!authData.sub.role.includes('bidder')) {
-                return res.status(403).json({message: "Forbidden: You are not authorized to place a bid"});
-            }
-
-            const gameId = req.params.id;
-            const {price} = req.body;
-
-            if (!price || isNaN(price)) {
-                return res.status(400).json({message: "Price is required and must be a number"});
-            }
-
-            const game = games.find(game => game.id === parseInt(gameId));
-            if (game) {
-                if (price <= game.auction.currentPrice) {
-                    return res.status(400).json({message: "Price must be greater than the current price"});
-                }
-                game.auction.bidders.push({
-                    name: authData.sub.username,
-                    amount: price,
-                });
-
-                distributeBid(game.slug, authData.sub.username, price);
-                game.auction.currentPrice = price;
-
-                return res.status(200).json({message: "Bid placed successfully"});
-            } else {
-                return res.status(404).json({message: "Game not found"});
-            }
+        if (!price || isNaN(price)) {
+            return res.status(400).json({message: "Het bod moet een getal zijn en mag niet leeg zijn."});
         }
-    });
+
+        const game = games.find(game => game.id === parseInt(gameId));
+        if (game) {
+            if (price <= game.auction.currentPrice) {
+                return res.status(400).json({message: "Het bod moet hoger zijn dan de huidige prijs."});
+            }
+            game.auction.bidders.push({
+                id: game.auction.bidders.length + 1,
+                name: authData.sub.username,
+                amount: price,
+                userId: authData.sub.id
+            });
+
+            distributeBid(game.slug, authData.sub.username, price);
+            game.auction.currentPrice = price;
+
+            return res.status(200).json({message: "Bod geplaatst"});
+        } else {
+            return res.status(404).json({message: "Game niet gevonden"});
+        }
+    } catch (e) {
+        return res.status(401).json({message: e.message});
+    }
 });
 
 export default router;

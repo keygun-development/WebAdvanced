@@ -14,21 +14,26 @@
             error = "De prijs moet een nummer zijn en hoger dan de huidige prijs.";
             return;
         }
-        const response = await fetch(`http://localhost:3000/games/${item.id}/bid`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-            body: JSON.stringify({price}),
-        });
+        try {
+            const response = await fetch(`http://localhost:3000/games/${item.id}/bid`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+                body: JSON.stringify({price}),
+            });
 
-        if (response.ok) {
-            success = "Bod geplaatst!";
-            return;
+            const data = await response.json();
+
+            if (response.ok) {
+                success = data.message;
+            } else {
+                error = data.message;
+            }
+        } catch (e) {
+            error = e.message;
         }
-
-        throw new Error('Failed to place bid');
     };
 </script>
 

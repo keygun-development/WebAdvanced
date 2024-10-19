@@ -1,51 +1,62 @@
 <script>
-    import {onMount} from "svelte"
+    import {onDestroy, onMount} from "svelte"
     import {isAuthenticated, user} from "../../stores/auth.js";
     import IncDecPrice from "../../components/IncDecPrice.svelte";
     import AuctionTime from "../../components/AuctionTime.svelte";
     import Dialog from "../../components/Dialog.svelte";
     import router from "page";
     import Button from "../../components/Button.svelte";
+    import Toast from "../../components/Toast.svelte";
 
+    let error = "";
     let currentGame = {};
     let sortedBidders = [];
     let dialogIsShowing = false;
+    let eventSource;
 
     onMount(() => {
         const fetchData = async () => {
             const response = await fetch("http://localhost:3000/games/" + params.params.slug);
             currentGame = await response.json();
-            sortedBidders = currentGame.auction.bidders.sort((a, b) => b.amount - a.amount);
+            if (response.ok) {
+                sortedBidders = currentGame.auction.bidders.sort((a, b) => b.amount - a.amount);
 
-            const eventSource = new EventSource(`http://localhost:3000/games/events/${params.params.slug}`);
+                eventSource = new EventSource(`http://localhost:3000/games/events/${params.params.slug}`);
 
-            eventSource.addEventListener("message", (event) => {
-                const newBidder = JSON.parse(event.data);
-                newBidder.newBidder = true;
-                sortedBidders = [newBidder, ...sortedBidders].sort((a, b) => b.amount - a.amount);
-                currentGame.auction.currentPrice = newBidder.amount;
+                eventSource.addEventListener("message", (event) => {
+                    const newBidder = JSON.parse(event.data);
+                    newBidder.newBidder = true;
+                    sortedBidders = [newBidder, ...sortedBidders].sort((a, b) => b.amount - a.amount);
+                    currentGame.auction.currentPrice = newBidder.amount;
 
-                setTimeout(() => {
-                    sortedBidders = sortedBidders.map(bidder => ({
-                        ...bidder,
-                        newBidder: false
-                    }));
-                }, 1000);
-            });
+                    setTimeout(() => {
+                        sortedBidders = sortedBidders.map(bidder => ({
+                            ...bidder,
+                            newBidder: false
+                        }));
+                    }, 1000);
+                });
 
-            eventSource.addEventListener("error", (event) => {
-                console.error("SSE error", event);
-                eventSource.close();
-            });
+                eventSource.addEventListener("error", () => {
+                    eventSource.close();
+                });
 
-            return () => {
-                eventSource.close();
-            };
+                return () => {
+                    eventSource.close();
+                };
+            } else {
+                error = currentGame.message
+            }
         };
 
         fetchData();
         return () => {
         };
+    });
+
+    onDestroy(() => {
+        sortedBidders = [];
+        eventSource.close();
     });
 
     const removeItem = async (id) => {
@@ -66,7 +77,12 @@
 </script>
 
 <div class="md:px-10 mx-auto xl:px-20 2xl:max-w-[1280px] 2xl:px-0 w-full py-12 px-4">
-    {#if Object.keys(currentGame).length > 0}
+    {#if error}
+        <Toast variant="error">
+            {error}
+        </Toast>
+    {/if}
+    {#if Object.keys(currentGame).length > 0 && !error}
         <div class="flex items-center justify-between">
             <h1 class="text-4xl text-primary">
                 {currentGame.name}
@@ -82,7 +98,8 @@
         </div>
         <div class="grid md:grid-cols-3 flex-col md:flex-row mt-4 gap-4">
             <div class="relative w-full flex-1">
-                <img src={currentGame.image} alt={currentGame.name}
+                <img src={currentGame.image === "" ? "/assets/games/placeholder.png" : currentGame.image}
+                     alt={currentGame.name}
                      class="relative inset-0 object-cover w-full h-full bg-black/50 duration-300 transition-all"/>
             </div>
             <div class="flex flex-col justify-between">

@@ -14,7 +14,7 @@ export default [
             "prefer-promise-reject-errors": "warn",
             "require-await": "error",
             "yoda": "warn",
-            "semi": "error",
+            "semi": "error"
         }
     }
 ];

@@ -2,7 +2,10 @@
     import Select from "../../components/Select.svelte";
     import {onMount} from "svelte";
     import router from "page"
+    import Toast from "../../components/Toast.svelte";
+    import Button from "../../components/Button.svelte";
 
+    let error = null;
     let title = "";
     let genre = "";
     let description = "";
@@ -24,39 +27,45 @@
     })
 
     const handleSubmit = async (event) => {
-        event.preventDefault()
+        error = null;
         const formData = new FormData(event.target);
 
-        const response = await fetch("http://localhost:3000/games/", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem("token")
-            },
-            body: JSON.stringify({
-                title: formData.get("title"),
-                genre: formData.get("genre"),
-                description: formData.get("description"),
-                image: formData.get("image"),
-                producer: formData.get("producer"),
-                consoles: formData.get("consoles"),
-                startingPrice: formData.get("startingPrice"),
-                endDate: formData.get("endDate")
-            })
-        });
+        try {
+            const response = await fetch("http://localhost:3000/games/", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem("token")
+                },
+                body: JSON.stringify({
+                    title: formData.get("title"),
+                    genre: formData.get("genre"),
+                    description: formData.get("description"),
+                    image: formData.get("image"),
+                    producer: formData.get("producer"),
+                    consoles: formData.get("consoles"),
+                    startingPrice: formData.get("startingPrice"),
+                    endDate: formData.get("endDate")
+                })
+            });
 
-        if (response.ok) {
-            router.show("/dashboard")
+            const data = await response.json();
+
+            if (response.ok) {
+                router.show("/dashboard")
+            } else {
+                error = data.message
+            }
+        } catch (e) {
+            error = e.message
         }
     }
-
-    export let params;
 </script>
 <div class="md:px-10 mx-auto xl:px-20 2xl:max-w-[1280px] 2xl:px-0 w-full py-12 px-4">
     <h1 class="text-4xl text-primary">
         Nieuwe veiling
     </h1>
-    <form on:submit={handleSubmit} class="flex flex-col mt-4" method="POST">
+    <form on:submit|preventDefault={handleSubmit} class="flex flex-col mt-4" method="POST">
         <div class="grid md:grid-cols-2 gap-4">
             <div class="relative w-full flex flex-col gap-y-4">
                 <div>
@@ -67,6 +76,7 @@
                            class="p-2 rounded w-full mt-2"
                            bind:value={title}
                            type="text"
+                           required
                            placeholder="Titel van game"/>
                 </div>
                 <div class="flex flex-col">
@@ -105,6 +115,7 @@
                            class="p-2 rounded w-full mt-2"
                            bind:value={producer}
                            type="text"
+                           required
                            placeholder="Voorbeeld: Treyarch"/>
                 </div>
                 <div>
@@ -115,6 +126,7 @@
                            class="p-2 rounded w-full mt-2"
                            bind:value={consoles}
                            type="text"
+                           required
                            placeholder="Scheiden met komma's voorbeeld: Playstation 4, Xbox 360, Pc"/>
                 </div>
             </div>
@@ -128,6 +140,7 @@
                             name="endDate"
                             bind:value={endDate}
                             type="datetime-local"
+                            required
                     />
                 </div>
                 <div>
@@ -138,11 +151,12 @@
                             class="p-2 rounded w-full mt-2"
                             rows="4"
                             name="description"
+                            bind:value={description}
                             placeholder="Beschrijving"
                     ></textarea>
                 </div>
                 <div>
-                    <label for="description" class="text-white">
+                    <label for="startingPrice" class="text-white">
                         Startprijs:
                     </label>
                     <input
@@ -150,15 +164,20 @@
                             name="startingPrice"
                             bind:value={startingPrice}
                             type="number"
+                            required
                             placeholder="Startprijs"/>
                 </div>
             </div>
+            {#if error}
+                <Toast variant="error">
+                    {error}
+                </Toast>
+            {/if}
         </div>
         <div class="flex justify-end">
-            <input type="submit"
-                   value="Opslaan"
-                   class="py-2 px-4 bg-secondary text-white hover:bg-secondary/90 cursor-pointer duration-300 transition-all mt-4"
-            />
+            <Button type="submit" variant="secondary">
+                Opslaan
+            </Button>
         </div>
     </form>
 </div>

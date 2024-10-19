@@ -3,7 +3,7 @@
 
     export let options;
     export let disabledOption;
-    export let name;
+    export let name = '';
 
     const dispatch = createEventDispatcher();
 

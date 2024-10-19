@@ -2,10 +2,13 @@
     import {onMount} from "svelte";
     import Dialog from "../../components/Dialog.svelte";
     import Button from "../../components/Button.svelte";
+    import Toast from "../../components/Toast.svelte";
 
     let currentGame = {};
     let dialogIsShowing = false;
     let dialogBidder = null;
+    let error = null;
+    let success = null;
 
     onMount(async () => {
         const response = await fetch("http://localhost:3000/games/" + params.params.slug);
@@ -13,46 +16,67 @@
     })
 
     const removeBidder = async (id) => {
-        const response = await fetch("http://localhost:3000/games/" + currentGame.id + "/bidders/" + id, {
-            method: "DELETE",
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem("token")
-            }
-        });
+        error = null
+        success = null
+        try {
+            const response = await fetch("http://localhost:3000/games/" + currentGame.id + "/bidders/" + id, {
+                method: "DELETE",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem("token")
+                }
+            });
 
-        if (response.ok) {
-            currentGame.auction.bidders = currentGame.auction.bidders.filter(b => b.id !== id)
-            dialogIsShowing = false
+            const data = await response.json()
+
+            if (response.ok) {
+                currentGame.auction.bidders = currentGame.auction.bidders.filter(b => b.id !== id)
+                dialogIsShowing = false
+                success = data.message
+            } else {
+                error = data.message
+            }
+        } catch (e) {
+            error = e.message
         }
     }
 
     const handleSubmit = async (event) => {
-        event.preventDefault()
+        error = null
+        success = null
         const formData = new FormData(event.target);
         const endDate = formData.get("endDate") ?? currentGame.auction.endDate;
 
-        const response = await fetch("http://localhost:3000/games/" + currentGame.id, {
-            method: "PUT",
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem("token")
-            },
-            body: JSON.stringify({
-                title: formData.get("title"),
-                image: formData.get("image"),
-                description: formData.get("description"),
-                auction: {
-                    endDate: new Date(endDate).toISOString()
-                }
-            })
-        });
+        try {
+            const response = await fetch("http://localhost:3000/games/" + currentGame.id, {
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem("token")
+                },
+                body: JSON.stringify({
+                    title: formData.get("title"),
+                    image: formData.get("image"),
+                    description: formData.get("description"),
+                    auction: {
+                        endDate: new Date(endDate).toISOString()
+                    }
+                })
+            });
 
-        if (response.ok) {
-            currentGame.title = formData.get("title");
-            currentGame.image = formData.get("image");
-            currentGame.description = formData.get("description");
-            currentGame.auction.endDate = new Date(endDate).toISOString();
+            const data = await response.json()
+
+            if (response.ok) {
+                currentGame.title = formData.get("title");
+                currentGame.image = formData.get("image");
+                currentGame.description = formData.get("description");
+                currentGame.auction.endDate = new Date(endDate).toISOString();
+                success = data.message
+            } else {
+                error = data.message
+            }
+        } catch (e) {
+            error = e.message
         }
     }
 
@@ -63,7 +87,7 @@
         <h1 class="text-4xl text-primary">
             {currentGame.name}
         </h1>
-        <form on:submit={handleSubmit} class="flex flex-col mt-4" method="POST">
+        <form on:submit|preventDefault={handleSubmit} class="flex flex-col mt-4" method="POST">
             <div class="grid md:grid-cols-3 gap-4">
                 <div class="relative w-full flex flex-col">
                     <label for="title" class="text-white">
@@ -131,6 +155,16 @@
                         </div>
                     {/each}
                 </div>
+                {#if error}
+                    <Toast variant="error">
+                        {error}
+                    </Toast>
+                {/if}
+                {#if success}
+                    <Toast variant="success">
+                        {success}
+                    </Toast>
+                {/if}
             </div>
             <div class="flex justify-end">
                 <input type="submit"

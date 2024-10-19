@@ -1,7 +1,7 @@
 <script>
     import {onMount} from "svelte";
-    import AuctionItem from "../../components/AuctionItem.svelte";
-    import Button from "../../components/Button.svelte";
+    import AuctionItem from "../components/AuctionItem.svelte";
+    import Button from "../components/Button.svelte";
 
     let expiredAuctions = [];
     let activeAuctions = [];
@@ -15,7 +15,7 @@
     })
 </script>
 <div class="md:px-10 mx-auto xl:px-20 2xl:max-w-[1280px] 2xl:px-0 w-full py-12 px-4">
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between flex-wrap">
         <h1 class="text-primary text-4xl">
             Dashboard
         </h1>
@@ -28,7 +28,7 @@
             <p class="text-xl text-white">
                 Actieve biedingen
             </p>
-            <div class="grid grid-cols-1 md:grid-cols-2 mt-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 mt-4 gap-4">
                 {#each activeAuctions as game}
                     <AuctionItem item={game}/>
                 {/each}
