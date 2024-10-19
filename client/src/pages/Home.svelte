@@ -1,5 +1,5 @@
 <script>
-    import {onDestroy, onMount} from 'svelte';
+    import {onMount} from 'svelte';
     import Select from "../components/Select.svelte"
     import AuctionItem from "../components/AuctionItem.svelte";
     import Toast from "../components/Toast.svelte";
@@ -12,7 +12,6 @@
     let consoles = [];
     let selectedMaxPrice = 20;
     let search = "";
-    let eventSources = [];
     let limit = 10;
 
     onMount(async () => {
@@ -28,7 +27,6 @@
                 }
             });
         });
-        subscribeToGameUpdates(filteredGames);
     });
 
     const addFilter = async (filter, value) => {
@@ -40,42 +38,7 @@
         }
         const response = await fetch("http://localhost:3000/games?" + filters.map(f => `${f.filter}=${f.value}`).join("&"));
         filteredGames = await response.json();
-
-        unsubscribeFromGameUpdates();
-
-        subscribeToGameUpdates(filteredGames);
     }
-
-    const subscribeToGameUpdates = (games) => {
-        games.forEach(game => {
-            const eventSource = new EventSource(`http://localhost:3000/games/events/${game.slug}`);
-
-            eventSource.addEventListener("message", (event) => {
-                const updatedData = JSON.parse(event.data);
-                const gameIndex = filteredGames.findIndex(g => g.slug === updatedData.slug);
-
-                if (gameIndex !== -1) {
-                    filteredGames[gameIndex].auction.currentPrice = updatedData.amount;
-                    filteredGames = [...filteredGames];
-                }
-            });
-
-            eventSource.addEventListener("error", () => {
-                eventSource.close();
-            });
-
-            eventSources.push(eventSource);
-        });
-    };
-
-    const unsubscribeFromGameUpdates = () => {
-        eventSources.forEach(source => source.close());
-        eventSources = [];
-    };
-
-    onDestroy(() => {
-        unsubscribeFromGameUpdates();
-    });
 
     $: genres = Array.from(new Set(games.map(game => game.genre).filter(Boolean)));
     $: producers = Array.from(new Set(games.map(game => game.producer).filter(Boolean)));
@@ -177,7 +140,7 @@
         </div>
         <div class="lg:w-9/12 grid sm:grid-cols-2 md:grid-cols-3 gap-4">
             {#if filteredGames.length > 0}
-                {#each filteredGames.sort((a, b) => new Date(a.auction.endDate).getTime() - new Date(b.auction.endDate).getTime()) as game}
+                {#each filteredGames as game}
                     <AuctionItem item={game}/>
                 {/each}
             {:else}

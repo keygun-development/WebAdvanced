@@ -83,7 +83,7 @@
         </Toast>
     {/if}
     {#if Object.keys(currentGame).length > 0 && !error}
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between flex-wrap">
             <h1 class="text-4xl text-primary">
                 {currentGame.name}
             </h1>

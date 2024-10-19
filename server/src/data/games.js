@@ -37,7 +37,7 @@ export default [
                     userId: 1
                 }
             ],
-            endDate: new Date(2024, 9, 19, 23, 59, 59)
+            endDate: new Date(2024, 10, 19, 23, 59, 59)
         }
     },
     {
@@ -65,7 +65,7 @@ export default [
                     userId: 1
                 }
             ],
-            endDate: new Date(2021, 11, 31, 23, 59, 59)
+            endDate: new Date(2024, 10, 31, 23, 59, 59)
         }
     },
     {

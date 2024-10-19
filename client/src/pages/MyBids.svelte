@@ -1,80 +1,30 @@
 <script>
-    import {onDestroy, onMount} from 'svelte';
+    import {onMount} from 'svelte';
     import AuctionItem from "../components/AuctionItem.svelte";
 
     let currentUserId = 1;
     let wonBids = [];
     let activeBids = [];
-    let eventSources = [];
 
-    const checkIfOverbid = (gameSlug, newBidder) => {
-        const gameIndex = activeBids.findIndex(g => g.slug === gameSlug);
+    onMount(async () => {
+        const response = await fetch("http://localhost:3000/games");
+        const games = await response.json();
 
-        if (gameIndex !== -1) {
-            const game = activeBids[gameIndex];
-            const userBid = game.auction.bidders.find(bidder => bidder.userId === currentUserId);
+        const now = new Date();
 
-            if (userBid && newBidder.amount > userBid.amount) {
-                activeBids[gameIndex] = {
-                    ...game,
-                    auction: {
-                        ...game.auction,
-                        currentPrice: newBidder.amount
-                    },
-                    overbid: true
-                };
+        activeBids = games.filter(game =>
+            new Date(game.auction.endDate) > now &&
+            game.auction.bidders.some(bidder => bidder.userId === currentUserId)
+        );
 
-                activeBids = [...activeBids];
-            }
-        }
-    };
+        wonBids = games.filter(game => {
+            const highestBid = game.auction.bidders.reduce((max, bidder) =>
+                bidder.amount > max.amount ? bidder : max, { amount: 0 });
 
-    onMount(() => {
-        const fetchDataAndSubscribe = async () => {
-            const response = await fetch("http://localhost:3000/games");
-            const games = await response.json();
-
-            const now = new Date();
-
-            activeBids = games.filter(game =>
-                new Date(game.auction.endDate) > now &&
-                game.auction.bidders.some(bidder => bidder.userId === currentUserId)
-            );
-
-            wonBids = games.filter(game => {
-                const highestBid = game.auction.bidders.reduce((max, bidder) =>
-                    bidder.amount > max.amount ? bidder : max, { amount: 0 });
-
-                return new Date(game.auction.endDate) <= now && highestBid.userId === currentUserId;
-            });
-
-            activeBids.forEach(game => {
-                const eventSource = new EventSource(`http://localhost:3000/games/events/${game.slug}`);
-
-                eventSource.addEventListener("message", (event) => {
-                    const newBidder = JSON.parse(event.data);
-
-                    checkIfOverbid(game.slug, newBidder);
-                });
-
-                eventSource.addEventListener("error", () => {
-                    eventSource.close();
-                });
-
-                eventSources.push(eventSource);
-            });
-        };
-
-        fetchDataAndSubscribe();
-
-        return () => {
-            eventSources.forEach(eventSource => eventSource.close());
-        };
+            return new Date(game.auction.endDate) <= now && highestBid.userId === currentUserId;
+        });
     });
 
-    onDestroy(() => {
-        eventSources.forEach(eventSource => eventSource.close());
-    });
 </script>
 
 <div class="md:px-10 mx-auto xl:px-20 2xl:max-w-[1280px] 2xl:px-0 w-full py-12 px-4">

@@ -75,7 +75,7 @@
     >
         <div
                 class="h-0.5 w-full bg-white transition-all duration-300 absolute top-0"
-                class:top-[6px]={isOpen}
+                class:top-[7px]={isOpen}
                 class:rotate-45={isOpen}
         ></div>
 
@@ -105,6 +105,11 @@
                        href="/registreren">Registreren</a></li>
             {/if}
             {#if $isAuthenticated}
+                <li>
+                    <a class:underline={active === "/mijn-biedingen"} class="text-primary p-4 flex" href="/mijn-biedingen">
+                        Mijn biedingen
+                    </a>
+                </li>
                 {#if $user && $user.role.includes("admin")}
                     <li>
                         <a class:underline={active === "/dashboard"} class="text-primary p-4 flex" href="/dashboard">
