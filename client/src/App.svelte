@@ -72,6 +72,7 @@
     router('/games/:slug/edit', adminMiddleware, (ctx) => {
         page = GameEdit;
         currentRoute = ctx.pathname;
+        params = ctx;
     })
 
     router.start();
