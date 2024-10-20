@@ -22,19 +22,19 @@ export default [
                     id: 1,
                     name: "John Doe",
                     amount: 5,
-                    userId: 1
+                    userId: 5
                 },
                 {
                     id: 2,
                     name: "John Doe",
                     amount: 7,
-                    userId: 1
+                    userId: 5
                 },
                 {
                     id: 3,
                     name: "John Doe",
                     amount: 10,
-                    userId: 1
+                    userId: 5
                 }
             ],
             endDate: new Date(2024, 10, 19, 23, 59, 59)
@@ -62,7 +62,7 @@ export default [
                 {
                     name: "John Doe",
                     amount: 5,
-                    userId: 1
+                    userId: 5
                 }
             ],
             endDate: new Date(2024, 10, 31, 23, 59, 59)
@@ -89,7 +89,7 @@ export default [
                 {
                     name: "Jane Smith",
                     amount: 25,
-                    userId: 2
+                    userId: 6
                 },
                 {
                     name: "Chris Brown",
@@ -131,7 +131,7 @@ export default [
                 {
                     name: "John Doe",
                     amount: 25,
-                    userId: 1
+                    userId: 5
                 }
             ],
             endDate: new Date(2024, 10, 25, 20, 30, 0)
@@ -156,7 +156,7 @@ export default [
                 {
                     name: "John Doe",
                     amount: 40,
-                    userId: 1
+                    userId: 5
                 },
                 {
                     name: "Alex Johnson",
@@ -166,7 +166,7 @@ export default [
                 {
                     name: "Jane Smith",
                     amount: 50,
-                    userId: 2
+                    userId: 6
                 }
             ],
             endDate: new Date(2024, 10, 30, 12, 0, 0)
@@ -192,7 +192,7 @@ export default [
                 {
                     name: "Jane Smith",
                     amount: 35,
-                    userId: 2
+                    userId: 6
                 },
                 {
                     name: "Chris Brown",
@@ -221,7 +221,7 @@ export default [
                 {
                     name: "John Doe",
                     amount: 15,
-                    userId: 1
+                    userId: 5
                 },
                 {
                     name: "Alex Johnson",
@@ -252,7 +252,7 @@ export default [
                 {
                     name: "Jane Smith",
                     amount: 20,
-                    userId: 2
+                    userId: 6
                 },
                 {
                     name: "Chris Brown",
@@ -284,7 +284,7 @@ export default [
                 {
                     name: "John Doe",
                     amount: 15,
-                    userId: 1
+                    userId: 5
                 },
                 {
                     name: "Alex Johnson",
@@ -321,7 +321,7 @@ export default [
                 {
                     name: "Jane Smith",
                     amount: 30,
-                    userId: 2
+                    userId: 6
                 }
             ],
             endDate: new Date(2024, 11, 3, 23, 0, 0)

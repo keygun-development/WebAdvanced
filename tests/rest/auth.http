@@ -1,24 +1,67 @@
 ###
-### Retrieve a token that can be used for calls requiring authentication
+### Create a new user
 ###
 POST {{protocol}}{{host}}:{{port}}/auth
 Content-Type: application/json
 Accept: application/json
 
 {
-  "username": "user",
-  "password": "pass"
+  "username": "user1",
+  "password": "mypassword",
+  "email": "user1@gameveilingen.nl"
 }
 
-> {%
-client.global.set("token", "m1jnH3l3L4ng3en5uperV31l!geT0ken");
-%}
-
-
 ###
-### Invalidate the token
+### Attempt to create a user with missing email
 ###
-DELETE {{protocol}}{{host}}:{{port}}/auth
+
+POST {{protocol}}{{host}}:{{port}}/auth
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer {{token}}
+
+{
+  "username": "user1",
+  "password": "mypassword"
+}
+
+###
+### Attempt to create a user with an existing email
+###
+
+POST {{protocol}}{{host}}:{{port}}/auth
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "user2",
+  "password": "mypassword",
+  "email": "user@gameveilingen.nl"
+}
+
+###
+### Attempt to create a user with an existing username
+###
+
+POST {{protocol}}{{host}}:{{port}}/auth
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "user",
+  "password": "mypassword123",
+  "email": "user2@gameveilingen.nl"
+}
+
+###
+### Attempt to create a user with a password that is too short
+###
+
+POST {{protocol}}{{host}}:{{port}}/auth
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "user3",
+  "password": "short",
+  "email": "user3@gameveilingen.nl"
+}

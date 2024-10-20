@@ -7,7 +7,6 @@
 
     let error = null;
     let title = "";
-    let genre = "";
     let description = "";
     let image = "";
     let producer = "";

@@ -1,0 +1,6 @@
+###
+### Fetch all genres from the server
+###
+
+GET {{protocol}}{{host}}:{{port}}/genres
+Accept: application/json

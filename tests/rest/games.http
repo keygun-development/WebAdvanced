@@ -1,0 +1,168 @@
+###
+### Fetch all games from the server
+###
+GET {{protocol}}{{host}}:{{port}}/games
+Accept: application/json
+
+###
+### Fetch all games from the server with a specific genre
+###
+GET {{protocol}}{{host}}:{{port}}/games?genre=Shooter
+Accept: application/json
+
+###
+### Fetch all games from the server from a specific producer
+###
+GET {{protocol}}{{host}}:{{port}}/games?producer=Treyarch
+Accept: application/json
+
+###
+### Fetch all games from the server from a specific console
+###
+GET {{protocol}}{{host}}:{{port}}/games?console=PC
+Accept: application/json
+
+###
+### Fetch all games from the server with a limit of 5
+###
+GET {{protocol}}{{host}}:{{port}}/games?limit=5
+Accept: application/json
+
+###
+### Fetch game by slug
+###
+GET {{protocol}}{{host}}:{{port}}/games/black-ops-2
+Accept: application/json
+
+###
+### Create a new game
+###
+POST {{protocol}}{{host}}:{{port}}/games
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidXNlcklkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBnYW1ldmVpbGluZ2VuLm5sIiwicm9sZSI6WyJhZG1pbiIsImJpZGRlciJdfSwiaWF0IjoxNzI5NDU4NzEwLCJleHAiOjE3Mjk0NjIzMTB9.N9iJnGQGYh2LfztAQpO3sOtvLgfFoFDmsYdxmaDe0yI
+
+{
+  "title": "New Game",
+  "producer": "Producer 3",
+  "genre": "Adventure",
+  "consoles": "PC,PS5",
+  "endDate": "2024-12-31T23:59:59Z",
+  "startingPrice": 25,
+  "description": "Description for New Game",
+  "image": "url_to_image_3"
+}
+
+###
+### Update a game
+###
+PUT {{protocol}}{{host}}:{{port}}/games/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidXNlcklkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBnYW1ldmVpbGluZ2VuLm5sIiwicm9sZSI6WyJhZG1pbiIsImJpZGRlciJdfSwiaWF0IjoxNzI5NDU4NzEwLCJleHAiOjE3Mjk0NjIzMTB9.N9iJnGQGYh2LfztAQpO3sOtvLgfFoFDmsYdxmaDe0yI
+
+
+{
+  "title": "Updated Game Title",
+  "image": "updated_image_url",
+  "description": "Updated description.",
+  "auction": {
+    "endDate": "2025-01-01T23:59:59Z"
+  }
+}
+
+###
+### Create Game with Missing Required Fields
+###
+POST {{protocol}}{{host}}:{{port}}/games
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidXNlcklkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBnYW1ldmVpbGluZ2VuLm5sIiwicm9sZSI6WyJhZG1pbiIsImJpZGRlciJdfSwiaWF0IjoxNzI5NDU4NzEwLCJleHAiOjE3Mjk0NjIzMTB9.N9iJnGQGYh2LfztAQpO3sOtvLgfFoFDmsYdxmaDe0yI
+
+{
+  "producer": "Producer 4",
+  "genre": "Action",
+  "consoles": "PC,PS5"
+}
+
+###
+### Create Game with Invalid Price
+###
+POST {{protocol}}{{host}}:{{port}}/games
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidXNlcklkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBnYW1ldmVpbGluZ2VuLm5sIiwicm9sZSI6WyJhZG1pbiIsImJpZGRlciJdfSwiaWF0IjoxNzI5NDU4NzEwLCJleHAiOjE3Mjk0NjIzMTB9.N9iJnGQGYh2LfztAQpO3sOtvLgfFoFDmsYdxmaDe0yI
+
+{
+  "title": "Invalid Price Game",
+  "producer": "Producer 5",
+  "genre": "Action",
+  "consoles": "PC,PS5",
+  "endDate": "2024-12-31T23:59:59Z",
+  "startingPrice": "not-a-number",
+  "description": "Invalid price test.",
+  "image": "url_to_image_5"
+}
+
+###
+### Create Game with Duplicate Title
+###
+POST {{protocol}}{{host}}:{{port}}/games
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidXNlcklkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBnYW1ldmVpbGluZ2VuLm5sIiwicm9sZSI6WyJhZG1pbiIsImJpZGRlciJdfSwiaWF0IjoxNzI5NDU4NzEwLCJleHAiOjE3Mjk0NjIzMTB9.N9iJnGQGYh2LfztAQpO3sOtvLgfFoFDmsYdxmaDe0yI
+
+{
+  "title": "Minecraft",
+  "producer": "Mojang",
+  "genre": "Adventure",
+  "consoles": "PC,PS4",
+  "endDate": "2024-12-31T23:59:59Z",
+  "startingPrice": 30,
+  "description": "Duplicate title test.",
+  "image": "url_to_image_6"
+}
+
+###
+### Update Game with Non-Existing ID
+###
+PUT {{protocol}}{{host}}:{{port}}/games/999
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidXNlcklkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBnYW1ldmVpbGluZ2VuLm5sIiwicm9sZSI6WyJhZG1pbiIsImJpZGRlciJdfSwiaWF0IjoxNzI5NDU4NzEwLCJleHAiOjE3Mjk0NjIzMTB9.N9iJnGQGYh2LfztAQpO3sOtvLgfFoFDmsYdxmaDe0yI
+
+{
+  "title": "Non-Existing Game",
+  "image": "non_existing_image_url",
+  "description": "This game does not exist."
+}
+
+###
+### Delete Game with Non-Existing ID
+###
+DELETE {{protocol}}{{host}}:{{port}}/games/999
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidXNlcklkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBnYW1ldmVpbGluZ2VuLm5sIiwicm9sZSI6WyJhZG1pbiIsImJpZGRlciJdfSwiaWF0IjoxNzI5NDU4NzEwLCJleHAiOjE3Mjk0NjIzMTB9.N9iJnGQGYh2LfztAQpO3sOtvLgfFoFDmsYdxmaDe0yI
+
+###
+### Bid on a game with a invalid price
+###
+POST {{protocol}}{{host}}:{{port}}/games/1/bid
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidXNlcklkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBnYW1ldmVpbGluZ2VuLm5sIiwicm9sZSI6WyJhZG1pbiIsImJpZGRlciJdfSwiaWF0IjoxNzI5NDU4NzEwLCJleHAiOjE3Mjk0NjIzMTB9.N9iJnGQGYh2LfztAQpO3sOtvLgfFoFDmsYdxmaDe0yI
+
+{
+  "price": "invalid-price"
+}
+
+###
+### Bid on a game with a price lower than the current price
+###
+POST {{protocol}}{{host}}:{{port}}/games/1/bid
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOnsidXNlcklkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBnYW1ldmVpbGluZ2VuLm5sIiwicm9sZSI6WyJhZG1pbiIsImJpZGRlciJdfSwiaWF0IjoxNzI5NDU4NzEwLCJleHAiOjE3Mjk0NjIzMTB9.N9iJnGQGYh2LfztAQpO3sOtvLgfFoFDmsYdxmaDe0yI
+
+{
+  "price": 10
+}

@@ -1,5 +1,3 @@
-import { fontFamily } from "tailwindcss/defaultTheme";
-
 /** @type {import('tailwindcss').Config} */
 const config = {
 	darkMode: ["class"],
@@ -13,15 +11,6 @@ const config = {
 			}
 		},
 		extend: {
-			animation: {
-				'fly-in': 'flyIn 0.5s forwards'
-			},
-			keyframes: {
-				flyIn: {
-					'0%': { opacity: '0', transform: 'translateX(-20px)' },
-					'100%': { opacity: '1', transform: 'translateX(0)' },
-				}
-			},
 			colors: {
 				background: "#102337",
 				primary: "#f8c60d",

@@ -1,6 +1,7 @@
 <script>
     import {onMount} from 'svelte';
     import AuctionItem from "../components/AuctionItem.svelte";
+    import Toast from "../components/Toast.svelte";
 
     let currentUserId = 1;
     let wonBids = [];
@@ -19,7 +20,7 @@
 
         wonBids = games.filter(game => {
             const highestBid = game.auction.bidders.reduce((max, bidder) =>
-                bidder.amount > max.amount ? bidder : max, { amount: 0 });
+                bidder.amount > max.amount ? bidder : max, {amount: 0});
 
             return new Date(game.auction.endDate) <= now && highestBid.userId === currentUserId;
         });
@@ -35,18 +36,30 @@
         Actieve Biedingen
     </h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
-        {#each activeBids as game}
-            <AuctionItem overbid={game?.overbid ?? false} item={game}/>
-        {/each}
+        {#if activeBids.length > 0 }
+            {#each activeBids as game}
+                <AuctionItem item={game}/>
+            {/each}
+        {:else}
+            <Toast variant="error">
+                U heeft momenteel geen actieve biedingen.
+            </Toast>
+        {/if}
     </div>
 
     <h2 class="text-2xl mt-8 text-white">
         Gewonnen Biedingen
     </h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
-        {#each wonBids as game}
-            <AuctionItem item={game}/>
-        {/each}
+        {#if wonBids.length > 0}
+            {#each wonBids as game}
+                <AuctionItem item={game}/>
+            {/each}
+        {:else}
+            <Toast variant="error">
+                U heeft momenteel geen gewonnen biedingen.
+            </Toast>
+        {/if}
     </div>
     <p class="text-white text-right">
         Nog te betalen door u:

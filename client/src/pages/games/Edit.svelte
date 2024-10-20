@@ -137,7 +137,7 @@
                 </div>
                 <div class="flex flex-col h-full max-h-[400px] divide-y overflow-auto bg-background/10">
                     {#each currentGame.auction.bidders as bidder}
-                        <div class="flex justify-between items-center p-4 {bidder.newBidder ? 'animate-fly-in' : ''} duration-100">
+                        <div class="flex justify-between items-center p-4 duration-100">
                             <p class="text-white">
                                 {bidder.name}
                             </p>

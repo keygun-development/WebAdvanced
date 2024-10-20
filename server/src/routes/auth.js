@@ -25,9 +25,9 @@ router.post("/", async (req, res) => {
     try {
         const hashedPassword = await hash(password, 10);
 
-        const user = {id: users.length + 1, username, email, password: hashedPassword};
+        const user = {id: users.length + 1, username, email, password: hashedPassword, role: ['bidder']};
         users.push(user);
-        res.status(201).json({message: "Gebruiker is succesvol aangemaakt."});
+        res.status(201).json({message: "Gebruiker is succesvol aangemaakt.", user: user});
     } catch (error) {
         res.status(500).json({message: "Er is een fout opgetreden met het aanmaken van de gebruiker."});
         throw error;

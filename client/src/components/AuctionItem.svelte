@@ -2,19 +2,11 @@
     import AuctionTime from "./AuctionTime.svelte";
 
     export let item;
-    export let overbid = false;
 </script>
 
 <div class="relative flex flex-col">
-    {#if overbid}
-        <p class="text-white">
-            Je bent zojuist overboden!
-        </p>
-    {/if}
     <a href="/games/{item.slug}" class="relative group flex-1">
-        <img class={overbid
-        ? "relative inset-0 object-cover w-full h-full bg-black/50 duration-300 transition-all group-hover:bg-black/80 outline outline-2 outline-primary"
-        : "relative inset-0 object-cover w-full h-full bg-black/50 duration-300 transition-all group-hover:bg-black/80"}
+        <img class="relative inset-0 object-cover w-full h-full bg-black/50 duration-300 transition-all group-hover:bg-black/80"
              src={item.image === "" ? "/assets/games/placeholder.png" : item.image}
              alt={item.name + " afbeelding"}/>
 

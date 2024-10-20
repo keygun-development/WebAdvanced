@@ -2,7 +2,7 @@ import {AccessToken} from "../hooks/AccessToken.js";
 import router from "page";
 import {isAuthenticated, user} from "../stores/auth.js";
 
-export async function authMiddleware(ctx, next) {
+export async function authMiddleware(ctx, next, requiredRole = null) {
     try {
         const token = new AccessToken();
         const currentTime = Math.floor(Date.now() / 1000);
@@ -17,8 +17,8 @@ export async function authMiddleware(ctx, next) {
             return router.redirect("/inloggen");
         }
 
-        if (!token.payload.sub.role.includes("admin")) {
-            return router.redirect("/mijn-profiel");
+        if (requiredRole && !token.payload.sub.role.includes(requiredRole)) {
+            return router.redirect("/");
         }
 
         isAuthenticated.set(true)
