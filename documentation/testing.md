@@ -28,16 +28,16 @@ The table below shows an overview of which test covers which non-functional requ
 
 | Test | NF1: Prestaties | NF2: Beveiliging | NF3: Gebruiksvriendelijkheid | NF4: Cross-Browser Compatibiliteit | NF5: Mobiele Responsiviteit |
 |:----:|:----------------:|:----------------:|:---------------------------:|:----------------------------------:|:---------------------------:|
-|  T1  |         X        |       X          |            X                |                                    |                             |
-|  T2  |         X        |       X          |            X                |                                    |                             |
-|  T3  |         X        |                    |                             |                                    |                             |
-|  T4  |         X        |                    |                             |                                    |                             |
-|  T5  |         X        |       X          |                             |                                    |                             |
-|  T6  |         X        |                    |                             |                                    |                             |
-|  T7  |         X        |                    |                            |                                    |                             |
-|  T8  |         X        |                    |                             |                                    |                             |
-|  T9  |         X        |                    |                             |                                    |                             |
-| T10  |         X        |                    |                             |                                    |                             |
+|  T1  |         X        |       X          |            X                |                   X                 |                 X            |
+|  T2  |         X        |       X          |            X                |                    X                |               X              |
+|  T3  |         X        |         X           |             X                |                 X                   |            X                 |
+|  T4  |         X        |         X           |            X                 |                 X                   |           X                  |
+|  T5  |         X        |       X          |             X                |                    X                |            X                 |
+|  T6  |         X        |        X            |             X                |                 X                   |               X              |
+|  T7  |         X        |        X            |             X               |                 X                   |               X              |
+|  T8  |         X        |         X           |            X                |                 X                   |              X               |
+|  T9  |         X        |        X            |             X                |                 X                   |            X                 |
+| T10  |         X        |        X            |              X               |                X                    |            X                 |
 
 ## Test plan
 ## Testplan voor Gameveilingen.nl
